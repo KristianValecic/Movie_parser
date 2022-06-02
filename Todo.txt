@@ -1,4 +1,4 @@
-treba provjeriti getPerson sa stringom bez razmaka
+sqlRepo line: 93!!!!!!!
 
 rijesi format 1.2.2022 (parsiraj s delim tockom i onda fillaj u datTimeFormat)
 
@@ -7,12 +7,16 @@ spajanje na bazu (singleton, procedure i repository)
 stavljanje u bazu 
 
 pocisti parsanje descriptiona (s xml eventom)
+provjeriti zasto ne radi parse persona sa stringom bez razmaka
 
 Dodoaj getMovie u pozadinsku dretvu
 
 ako se pojavi greska, provjeri valjaju li procedure
 
+TREBA DELETEATI SVE NEPOTREBNE REPO
+
 Ponovo poslozi ui:
 Napravi wireframe, postavi velicinu panela, kreni dodavat
 
 2012-12-12T11:23:33
+

@@ -268,3 +268,21 @@ begin
 end
 go
 
+create proc deleteAllMovies
+as
+begin
+	Delete 
+	from MovieGenre
+
+	Delete 
+	from MovieRole
+
+	Delete 
+	from Movie
+
+	delete 
+	from Person
+end
+go
+
+
