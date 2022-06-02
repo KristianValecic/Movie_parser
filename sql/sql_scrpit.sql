@@ -268,3 +268,20 @@ begin
 end
 go
 
+create proc deleteAll
+	@MovieID int
+as
+begin 
+	Delete 
+	from MovieGenre 
+
+	Delete 
+	from MovieRole
+
+	Delete 
+	from Movie
+	
+	Delete 
+	from Person
+end
+go

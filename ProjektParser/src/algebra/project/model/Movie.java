@@ -45,17 +45,8 @@ public class Movie {
         this.startDate = startDate;
     }*/
     public Movie(int id, String title, LocalDateTime pubDate, String description, String origName, Person director, List<Person> actors, int duration, List<String> genre, String posterPath, String startDate) {
+        this(title, pubDate, description, origName, director, actors, duration, genre, posterPath, startDate);
         this.id = id;
-        this.title = title;
-        this.pubDate = pubDate;
-        this.description = description;
-        this.origName = origName;
-        this.director = director;
-        this.actors = actors;
-        this.duration = duration;
-        this.genre = genre;
-        this.posterPath = posterPath;
-        this.startDate = startDate;
     }
 
     public Movie(String title, LocalDateTime pubDate, String description, String origName, Person director, List<Person> actors, int duration, List<String> genre, String posterPath, String startDate) {

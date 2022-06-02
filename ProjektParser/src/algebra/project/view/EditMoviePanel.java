@@ -465,8 +465,9 @@ public class EditMoviePanel extends javax.swing.JPanel {
                     tfStartDate.getText().trim()
             );
             repository.createMovie(movie);
-        } catch (IOException ex) {
-            Logger.getLogger(EditMoviePanel.class.getName()).log(Level.SEVERE, null, ex);
+            model.setMovies(repository.selectAllMovies());
+            
+            //clearForm();
         } catch (Exception ex) {
             Logger.getLogger(EditMoviePanel.class.getName()).log(Level.SEVERE, null, ex);
         }

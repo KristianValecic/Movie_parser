@@ -1,3 +1,5 @@
+sqlRepo line: 93!!!!!!!!
+
 treba provjeriti getPerson sa stringom bez razmaka
 
 rijesi format 1.2.2022 (parsiraj s delim tockom i onda fillaj u datTimeFormat)

@@ -67,12 +67,14 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
 
     private static final String CREATE_MOVIE_GENRE = "{ CALL createMovieGenre (?,?,?) }";
     private static final String SELECT_MOVIE_GENRE = "{ CALL selectMovieGenre (?) }";
+    
+    private static final String DELETE_ALL = "{ CALL deleteAll }";
 
     @Override
     public int createMovie(Movie movie) throws Exception {
         DataSource dataSource = DataSourceSingleton.getInstance();
         try (Connection con = dataSource.getConnection();
-                CallableStatement stmt = con.prepareCall(CREATE_MOVIE)) {
+            CallableStatement stmt = con.prepareCall(CREATE_MOVIE)) {
 
             stmt.setString("@" + TITLE, movie.getTitle());
             stmt.setString("@" + PUB_DATE, movie.getPubDate().format(Movie.DATE_FORMAT)); //.format(Article.DATE_FORMATTER)
@@ -82,22 +84,25 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
             stmt.setString("@" + POSTER_PATH, movie.getPosterPath());
             stmt.setString("@" + START_DATE, movie.getStartDate());
 
-            createPerson(movie.getDirector());         // popravi kako citati tostring Optional-a
-            System.out.println(readOptionalString(movie.getDirector().getRoleType().toString()));
-            createMovieRole(stmt.getInt(ID_MOVIE), movie.getId(), movie.getDirector().getRoleType().toString());
-
-            createAllPeople(movie.getActors());
-            createAllMovieRoles(stmt.getInt(ID_MOVIE), movie.getActors());
-
-            for (String genre : movie.getGenre()) {
-                createMovieGenre(stmt.getInt(ID_MOVIE), genre);
-            }
-
+            
             stmt.registerOutParameter("@" + ID_MOVIE, Types.INTEGER);
 
             stmt.executeUpdate();
-            return stmt.getInt("@" + ID_MOVIE);
 
+            createPerson(movie.getDirector());    
+            // kreira persona, ali nema idPerson koji moze koristit kada radi MovieRole
+            String roleName = ParseOptionalString(movie.getDirector().getRoleType().toString());
+            //  popravit person id
+            createMovieRole(stmt.getInt("@" + ID_MOVIE), movie.getId(), roleName);
+            
+            createAllPeople(movie.getActors());
+            createAllMovieRoles(stmt.getInt("@" + ID_MOVIE), movie.getActors());
+            
+            for (String genre : movie.getGenre()) {
+                createMovieGenre(stmt.getInt("@" + ID_MOVIE), genre);
+            }
+            
+            return stmt.getInt("@" + ID_MOVIE);
         }
     }
 
@@ -230,6 +235,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
             stmt.registerOutParameter("@" + ID_PERSON, Types.INTEGER);
 
             stmt.executeUpdate();
+            
             return stmt.getInt("@" + ID_PERSON);
         }
     }
@@ -416,3 +422,24 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
         //provjeri vraca li valjane zanre
         return genres;
     }
+
+    private String ParseOptionalString(String toString) {
+        String name = toString.substring(toString.lastIndexOf("[") + 1);
+        StringBuilder sb = new StringBuilder(name);
+        sb.deleteCharAt(sb.length()-1);
+        
+        return sb.toString();
+    }
+
+    @Override
+    public void deleteAll() throws Exception {
+        DataSource dataSource = DataSourceSingleton.getInstance();
+        try (Connection con = dataSource.getConnection();
+                CallableStatement stmt = con.prepareCall(DELETE_ALL)) {
+
+            //stmt.setInt("@" + ID_PERSON, id);
+
+            stmt.executeUpdate();
+        }
+    }
+}

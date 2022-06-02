@@ -42,4 +42,6 @@ public interface Repository {
     void createMovieGenre(int movieID, String genre) throws Exception;
     List<String> selectMovieGenres(int movieID) throws Exception;
     
+    void deleteAll() throws Exception;
+    
 }
