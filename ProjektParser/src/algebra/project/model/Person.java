@@ -32,7 +32,12 @@ public class Person {
         this.lastName = lastName;
         //this.type = type;
         //this.setRoleType(typeName);
-    }    
+    }
+
+    @Override
+    public String toString() {
+        return firstName+" "+lastName;
+    }
     
     public int getId() {
         return id;
@@ -66,7 +71,7 @@ public class Person {
         Person person = new Person();
         String[] name = data.split(NAME_DELIM);
         person.setFirstName(name[0]);
-        person.setLastName(name[1]);
+        person.setLastName(name[1]);// ovo radi probleme, treba staviti u foreach
         person.setRoleType(roleName);
 
         return person;
@@ -86,7 +91,7 @@ public class Person {
 
     private enum RoleType {
         DIRECTOR("redatelj"),
-        ACTOR("glumci");
+        ACTOR("glumac");
 
         private final String roleName;
 

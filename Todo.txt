@@ -4,6 +4,8 @@ treba provjeriti getPerson sa stringom bez razmaka
 
 rijesi format 1.2.2022 (parsiraj s delim tockom i onda fillaj u datTimeFormat)
 
+-----Handle input u textField, kada je krivo pokayi iksić!!!!!! (nrp pubDate i duration, ako je krivo upisn ne pustaj dalje)
+
 spajanje na bazu (singleton, procedure i repository)
 
 stavljanje u bazu 

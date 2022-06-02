@@ -33,8 +33,8 @@ public interface Repository {
     List<Person> selectAllPeople() throws Exception;
     
     //MovieRole
-    void createMovieRole(int movieID, int personID, String RoleName) throws Exception;
-    void createAllMovieRoles(int movieID, List<Person> people) throws Exception;
+    void createMovieRole(int movieID, Person person, String RoleName) throws Exception;
+    void createAllMovieRoles(int movieID, List<Person> people, String roleName) throws Exception;
     Person selectMovieRole(int id, String roleName) throws Exception;
     List<Person> selectAllMovieRoles(int id, String roleName) throws Exception;
     

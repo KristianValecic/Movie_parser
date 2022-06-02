@@ -458,7 +458,7 @@ public class EditMoviePanel extends javax.swing.JPanel {
                     taDescription.getText().trim(),
                     tfOrigName.getText().trim(),
                     Person.getPerson(tfDirector.getText().trim(), tfDirector.getName()),
-                    Person.getPersonList(taActors.getText(), taActors.getName()),
+                    Person.getPersonList(taActors.getText().trim(), taActors.getName()),
                     Integer.parseInt(tfDuration.getText().trim()),
                     Movie.getGenreFromString(taGenre.getText().trim()),
                     tfPosterPath.getText().trim(),
@@ -470,6 +470,7 @@ public class EditMoviePanel extends javax.swing.JPanel {
             //clearForm();
         } catch (Exception ex) {
             Logger.getLogger(EditMoviePanel.class.getName()).log(Level.SEVERE, null, ex);
+            MessageUtils.showErrorMessage("Inpu error", "Something is written wrong");
         }
     }//GEN-LAST:event_btnCreateActionPerformed
 

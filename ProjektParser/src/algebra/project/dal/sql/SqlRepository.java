@@ -42,7 +42,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     //MovieRole
     //private static final String ID_MOVIE_ROLE = "IDMovieRole";
     private static final String MOVIE_ID = "MovieID";
-    private static final String PERSON_ID = "PersonID";
+    private static final String PERSON_NAME = "PersonName";
     private static final String ROLE_NAME = "RoleName";
 
     //MovieGenre
@@ -89,14 +89,15 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
 
             stmt.executeUpdate();
 
-            createPerson(movie.getDirector());    
-            // kreira persona, ali nema idPerson koji moze koristit kada radi MovieRole
+            //creating director
+            createPerson(movie.getDirector());
             String roleName = ParseOptionalString(movie.getDirector().getRoleType().toString());
             //  popravit person id
-            createMovieRole(stmt.getInt("@" + ID_MOVIE), movie.getId(), roleName);
+            createMovieRole(stmt.getInt("@" + ID_MOVIE), movie.getDirector(), roleName);
             
-            createAllPeople(movie.getActors());
-            createAllMovieRoles(stmt.getInt("@" + ID_MOVIE), movie.getActors());
+            createAllPeople(movie.getActors());// ovdje pukne
+            roleName = ParseOptionalString(movie.getActors().get(0).getRoleType().toString());
+            createAllMovieRoles(stmt.getInt("@" + ID_MOVIE), movie.getActors(), roleName);
             
             for (String genre : movie.getGenre()) {
                 createMovieGenre(stmt.getInt("@" + ID_MOVIE), genre);
@@ -242,19 +243,20 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
 
     @Override
     public void createAllPeople(List<Person> people) throws Exception {
-        DataSource dataSource = DataSourceSingleton.getInstance();
-        try (Connection con = dataSource.getConnection();
-                CallableStatement stmt = con.prepareCall(CREATE_PERSON)) {
+        //DataSource dataSource = DataSourceSingleton.getInstance();
+        //try (Connection con = dataSource.getConnection();
+          //      CallableStatement stmt = con.prepareCall(CREATE_PERSON)) {
 
             for (Person person : people) {
 
-                stmt.setString("@" + FIRSTNAME, person.getFirstName());
-                stmt.setString("@" + LASTNAME, person.getFirstName());
+                //stmt.setString("@" + FIRSTNAME, person.getFirstName());
+                //stmt.setString("@" + LASTNAME, person.getFirstName());
 
-                stmt.registerOutParameter("@" + ID_PERSON, Types.INTEGER);
-                stmt.executeUpdate();
+                //stmt.registerOutParameter("@" + ID_PERSON, Types.INTEGER);
+                createPerson(person);
+                //stmt.executeUpdate();
             }
-        }
+        //}
     }
 
     @Override
@@ -325,14 +327,14 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     }
 
     @Override
-    public void createMovieRole(int movieID, int personID, String RoleName) throws Exception {
+    public void createMovieRole(int movieID, Person person, String RoleName) throws Exception {
 
         DataSource dataSource = DataSourceSingleton.getInstance();
         try (Connection con = dataSource.getConnection();
                 CallableStatement stmt = con.prepareCall(CREATE_MOVIE_ROLE)) {
 
             stmt.setInt("@" + MOVIE_ID, movieID);
-            stmt.setInt("@" + PERSON_ID, personID);
+            stmt.setString("@" + PERSON_NAME, person.toString());
             stmt.setString("@" + ROLE_NAME, RoleName);
 
             stmt.executeUpdate();
@@ -340,9 +342,9 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     }
 
     @Override
-    public void createAllMovieRoles(int movieID, List<Person> people) throws Exception {
+    public void createAllMovieRoles(int movieID, List<Person> people, String roleName) throws Exception {
         for (Person person : people) {
-            createMovieRole(movieID, person.getId(), person.getRoleType().toString());
+            createMovieRole(movieID, person, roleName);
         }
     }
 

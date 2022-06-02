@@ -29,7 +29,7 @@ go
 
 /*fill person roles*/
 insert into PersonRole(RoleName)
-values('Director'), ('Actor')
+values('Director'), ('Actor'), ('Redatelj'), ('Glumac')
 go
 
 create table Genre (
@@ -212,13 +212,18 @@ go
 
 create proc createMovieRole
 	@MovieID int,
-	@PersonID int,	
+	@PersonName nvarchar(250),--@PersonID int,	
 	@RoleName nvarchar(250)
 as
 begin 
 	declare @roleID int
-	select @roleID = IDPersonRole from PersonRole where   RoleName = @RoleName
-
+	select @roleID = IDPersonRole from PersonRole where RoleName = @RoleName
+	 
+	declare @personID int
+	select @personID = IDPerson from Person where --checks if person already exists
+	Firstname = SUBSTRING(@PersonName, 0, CHARINDEX(' ', @PersonName)) and
+	Lastname = SUBSTRING(@PersonName,  CHARINDEX(' ', @PersonName) +1 , len(@PersonName))
+	
 	insert into MovieRole(MovieID, PersonID, PersonRoleID)
 	values (@MovieID, @PersonID, @roleID)
 end
