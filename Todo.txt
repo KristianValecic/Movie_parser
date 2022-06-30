@@ -1,10 +1,12 @@
 sqlRepo line: 93!!!!!!!!
 
+select na klik tablice
+
 treba provjeriti getPerson sa stringom bez razmaka
 
 rijesi format 1.2.2022 (parsiraj s delim tockom i onda fillaj u datTimeFormat)
 
------Handle input u textField, kada je krivo pokayi iksić!!!!!! (nrp pubDate i duration, ako je krivo upisn ne pustaj dalje)
+-----Handle input u textField, kada je krivo pokazi iksić!!!!!! (nrp pubDate i duration, ako je krivo upisn ne pustaj dalje)
 
 spajanje na bazu (singleton, procedure i repository)
 
@@ -20,3 +22,6 @@ Ponovo poslozi ui:
 Napravi wireframe, postavi velicinu panela, kreni dodavat
 
 2012-12-12T11:23:33
+
+TableViewmodel, postavljanje UI-a idt?
+https://liveracunarstvo.sharepoint.com/sites/ProgramiranjeuJavi12021.2022/Shared%20Documents/Forms/AllItems.aspx?FolderCTID=0x0120004D0571B9D4519944BC6806B50DF39246&id=/sites/ProgramiranjeuJavi12021.2022/Shared%20Documents/General/Recordings/Meeting%20in%20_General_-20220518_080944-Meeting%20Recording.mp4&parent=/sites/ProgramiranjeuJavi12021.2022/Shared%20Documents/General/Recordings

@@ -15,15 +15,20 @@ import algebra.project.utils.MessageUtils;
 import algebra.project.view.model.MovieTableModel;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.JTextComponent;
+import org.omg.CORBA.Environment;
 
 /**
  *
@@ -421,11 +426,11 @@ public class EditMoviePanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tbMoviesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMoviesMouseClicked
-        
+        ShowMovie();
     }//GEN-LAST:event_tbMoviesMouseClicked
 
     private void tbMoviesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbMoviesKeyReleased
-        
+        ShowMovie();
     }//GEN-LAST:event_tbMoviesKeyReleased
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
@@ -577,7 +582,7 @@ public class EditMoviePanel extends javax.swing.JPanel {
             }
         }
         
-        return true;
+        return ok;
     }
 
     
@@ -589,6 +594,61 @@ public class EditMoviePanel extends javax.swing.JPanel {
         FileUtils.copy(path, localPath);
         return localPath;
     }
+
+    private void ShowMovie() {
+            clearForm();
+            
+            int selectedRow = tbMovies.getSelectedRow();
+            int rowIndex = tbMovies.convertRowIndexToModel(selectedRow);
+            int selectedMovieId = (int) model.getValueAt(rowIndex, 0);
+            
+        try { 
+            Optional<Movie> optMovie = repository.selectMovie(selectedMovieId);
+            if (optMovie.isPresent()) {
+                selectedMovie = optMovie.get();
+                fillForm(selectedMovie);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(EditMoviePanel.class.getName()).log(Level.SEVERE, null, ex);
+            MessageUtils.showErrorMessage("Error", "Unable to select Movie!");
+        }
+        
+
+    }
+
+    private void clearForm() {
+        validationFields.forEach(e -> e.setText(""));
+        errorLabels.forEach(e -> e.setText(""));
+        lblIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/default.png")));
+        selectedMovie = null;
+    }
+
+    private void fillForm(Movie movie) {
+        tfTitle.setText(movie.getTitle());
+        tfOrigName.setText(movie.getOrigName());
+        taDescription.setText(movie.getDescription());
+        tfDuration.setText(Integer.toString(movie.getDuration()));
+        Person director = movie.getDirector();
+        if (director != null) {
+            tfDirector.setText(director.toString());            
+        }
+        tfPubDate.setText(movie.getPubDate().format(Movie.DATE_FORMAT));
+        tfStartDate.setText(movie.getStartDate());
+        for (String line : movie.getGenre()) {
+            taGenre.append(line);
+            taGenre.append("\n");        
+        }
+        for (Person p : movie.getActors()) {
+            taActors.append(p.toString());
+            taActors.append("\n");        
+        }
+        
+        if (movie.getPosterPath() != null && Files.exists(Paths.get(movie.getPosterPath()))) {
+            tfPosterPath.setText(movie.getPosterPath());
+            setIcon(lblIcon, new File(movie.getPosterPath()));
+        }
+    }
+
 
     
 }

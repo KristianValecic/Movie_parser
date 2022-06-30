@@ -12,6 +12,7 @@ import algebra.project.dal.PersonRepository;
 import algebra.project.dal.Repository;
 import algebra.project.model.Movie;
 import algebra.project.model.Person;
+import algebra.project.model.Person.RoleType;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -24,6 +25,9 @@ import javax.sql.DataSource;
 
 public class SqlRepository implements Repository { //MovieRepository, PersonRepository, MovieRoleRepository, MovieGenreRepository {
 
+    private static final String DIRECTOR = "Director";
+    private static final String ACTORS = "Actors";
+    
     //Movie
     private static final String ID_MOVIE = "IDMovie";
     private static final String TITLE = "Title";
@@ -65,7 +69,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     private static final String CREATE_MOVIE_ROLE = "{ CALL createMovieRole (?,?,?) }";
     private static final String SELECT_MOVIE_ROLE = "{ CALL selectMovieRole (?,?) }";
 
-    private static final String CREATE_MOVIE_GENRE = "{ CALL createMovieGenre (?,?,?) }";
+    private static final String CREATE_MOVIE_GENRE = "{ CALL createMovieGenre (?,?) }";
     private static final String SELECT_MOVIE_GENRE = "{ CALL selectMovieGenre (?) }";
     
     private static final String DELETE_ALL = "{ CALL deleteAll }";
@@ -99,7 +103,9 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
             roleName = ParseOptionalString(movie.getActors().get(0).getRoleType().toString());
             createAllMovieRoles(stmt.getInt("@" + ID_MOVIE), movie.getActors(), roleName);
             
-            for (String genre : movie.getGenre()) {
+            //zanr punkne
+            List<String> genres = movie.getGenre();
+            for (String genre : genres) {
                 createMovieGenre(stmt.getInt("@" + ID_MOVIE), genre);
             }
             
@@ -155,10 +161,10 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
                                     LocalDateTime.parse(rs.getString(PUB_DATE), Movie.DATE_FORMAT),
                                     rs.getString(DESC),
                                     rs.getString(ORIG_NAME),
-                                    selectMovieRole(id, "Director"), // director
+                                    selectMovieRole(id, RoleType.DIRECTOR.toString()), // director
                                     //rs.getString(),
                                     //rs.getString(), 
-                                    selectAllMovieRoles(id, "Actor"),// actors
+                                    selectAllMovieRoles(id, RoleType.ACTOR.toString()),// actors
                                     rs.getInt(DURATION),
                                     //rs.getString(), 
                                     selectMovieGenres(id),// GENRE
@@ -188,8 +194,8 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
                                 LocalDateTime.parse(rs.getString(PUB_DATE), Movie.DATE_FORMAT),// tu je problem
                                 rs.getString(DESC),
                                 rs.getString(ORIG_NAME),//provjeri je li dobar id
-                                selectMovieRole(rs.getInt(ID_MOVIE), "Director"),
-                                selectAllMovieRoles(rs.getInt(ID_MOVIE), "Actor"),
+                                selectMovieRole(rs.getInt(ID_MOVIE), RoleType.DIRECTOR.toString()),
+                                selectAllMovieRoles(rs.getInt(ID_MOVIE), RoleType.ACTOR.toString()),
                                 rs.getInt(DURATION),
                                 selectMovieGenres(rs.getInt(ID_MOVIE)),
                                 rs.getString(POSTER_PATH),
@@ -415,9 +421,9 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
         try (Connection con = dataSource.getConnection();
                 CallableStatement stmt = con.prepareCall(SELECT_MOVIE_GENRE)) {
             stmt.setInt("@" + MOVIE_ID, movieID);
-            try (ResultSet rs = stmt.executeQuery()) {
+            try (ResultSet rs = stmt.executeQuery()) { 
                 while (rs.next()) {
-                    genres.add(stmt.getString(GENRE_NAME));
+                    genres.add(rs.getString(GENRE_NAME));
                 }
             }
         }

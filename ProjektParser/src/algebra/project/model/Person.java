@@ -89,7 +89,7 @@ public class Person {
         return people;
     }
 
-    private enum RoleType {
+    public enum RoleType {
         DIRECTOR("redatelj"),
         ACTOR("glumac");
 

@@ -63,6 +63,13 @@ go
 
 --PROCEDURES
 
+select * from Genre
+select * from Movie	
+select * from MovieGenre
+select * from Person
+select * from PersonRole
+select * from MovieRole
+
 create proc createMovie
 	@Title NVARCHAR(250),
 	@PublishDate NVARCHAR(250),
@@ -121,6 +128,8 @@ begin
 	where IDmovie = @IDMovie
 end
 go
+
+exec deleteMovie 9
 
 create proc selectMovie
 	@IDMovie INT 
@@ -229,12 +238,16 @@ begin
 end
 go
 
+exec selectMovieRole 10, 'director'
+select * from MovieRole
+
+
 create proc selectMovieRole
 	@MovieID int,
 	@RoleName nvarchar(100)
 as
 begin 
-	select IDPerson, Firstname, Lastname/*, pr.RoleName*/ from MovieRole as mr
+	select IDPerson, Firstname, Lastname, pr.RoleName from MovieRole as mr
 	inner join Person as p on
 	p.IDPerson = mr.PersonID
 	inner join PersonRole as pr on
@@ -261,6 +274,13 @@ if	not exists (select * from Genre where GenreName = @Genre)
 		values(@MovieID, @idGenre)
 end
 go
+
+exec createMovieGenre 44, 'genre'
+
+select * from movieGenre
+select * from Genre
+select * from movie
+
 
 create proc selectMovieGenre
 	@MovieID int
@@ -290,3 +310,5 @@ begin
 	from Person
 end
 go
+
+
