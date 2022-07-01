@@ -27,6 +27,7 @@ public interface Repository {
     //person 
     int createPerson(Person person) throws Exception;
     void createAllPeople(List<Person> people) throws Exception;
+    void updateAllPeople(List<Person> people) throws Exception;
     void updatePerson(int id, Person data) throws Exception;
     void deletePerson(int id) throws Exception;
     Optional<Person> selectPerson(int id) throws Exception;

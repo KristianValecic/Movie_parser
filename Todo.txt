@@ -1,6 +1,6 @@
-sqlRepo line: 93!!!!!!!!
+DELETE ALL i vidi zasto parsirani filmovi nemaju glumce i zanrove
 
-select na klik tablice
+provjeri kako radi update nakon sto si napravio rss parser load u bazu
 
 treba provjeriti getPerson sa stringom bez razmaka
 
@@ -8,15 +8,9 @@ rijesi format 1.2.2022 (parsiraj s delim tockom i onda fillaj u datTimeFormat)
 
 -----Handle input u textField, kada je krivo pokazi iksić!!!!!! (nrp pubDate i duration, ako je krivo upisn ne pustaj dalje)
 
-spajanje na bazu (singleton, procedure i repository)
-
-stavljanje u bazu 
-
 pocisti parsanje descriptiona (s xml eventom)
 
 Dodoaj getMovie u pozadinsku dretvu
-
-ako se pojavi greska, provjeri valjaju li procedure
 
 Ponovo poslozi ui:
 Napravi wireframe, postavi velicinu panela, kreni dodavat
@@ -25,3 +19,14 @@ Napravi wireframe, postavi velicinu panela, kreni dodavat
 
 TableViewmodel, postavljanje UI-a idt?
 https://liveracunarstvo.sharepoint.com/sites/ProgramiranjeuJavi12021.2022/Shared%20Documents/Forms/AllItems.aspx?FolderCTID=0x0120004D0571B9D4519944BC6806B50DF39246&id=/sites/ProgramiranjeuJavi12021.2022/Shared%20Documents/General/Recordings/Meeting%20in%20_General_-20220518_080944-Meeting%20Recording.mp4&parent=/sites/ProgramiranjeuJavi12021.2022/Shared%20Documents/General/Recordings
+
+Aplikacija:
+prva forma login/register (reg. kreira samo usera)
+
+nakon logina se otvara odg. forma
+
+Admin forma:
+XML upload i opci delete svega (koji brise i slike iz assestsa)
+
+User forma:
+crud za entitete

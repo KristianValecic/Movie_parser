@@ -38,6 +38,31 @@ create table Genre (
 )
 go
 
+create table AppUser (
+	IDAppUser int primary key identity(1,1),
+	Username nvarchar(250),
+	Password nvarchar(250),
+)
+go
+
+create table AppUserRole (
+	IDAppUserRole int primary key identity(1,1),
+	RoleName nvarchar(250),
+)
+go
+
+/*fill AppUser roles*/
+insert into AppUserRole(RoleName)
+values('Admin'), ('User'), ('Redatelj'), ('Glumac')
+go
+
+
+create table AssignedAppUserRoles (
+	IDAssignedAppUserRoles int primary key identity(1,1),
+	UserRoleID int,
+	AppUserID int
+)
+go
 
 create table MovieRole (
 	IDMovieRole int primary key identity(1,1),
@@ -155,12 +180,12 @@ create proc createPerson
 	@IDPerson INT OUTPUT
 as
 begin -- create person only if he doesnt already exist
-if	not exists (select * from Person where @Firstname = Firstname and @Lastname = Lastname)
+if	not exists (select * from Person where Firstname =  @Firstname and Lastname = @Lastname)
 	begin
 		INSERT INTO Person 
 		VALUES(@Firstname, @Lastname)
+		SET @IDPerson = SCOPE_IDENTITY()
 	end
-	SET @IDPerson = SCOPE_IDENTITY()
 end
 go
 
@@ -214,8 +239,11 @@ create proc createPersonRole
 	@RoleName nvarchar(250)
 as
 begin 
-	INSERT INTO PersonRole 
-	VALUES(@RoleName)
+	if	not exists (select * from PersonRole where RoleName =  @RoleName)
+	begin
+		INSERT INTO PersonRole 
+		VALUES(@RoleName)
+	end
 end
 go
 
@@ -237,10 +265,6 @@ begin
 	values (@MovieID, @PersonID, @roleID)
 end
 go
-
-exec selectMovieRole 10, 'director'
-select * from MovieRole
-
 
 create proc selectMovieRole
 	@MovieID int,
@@ -274,8 +298,6 @@ if	not exists (select * from Genre where GenreName = @Genre)
 		values(@MovieID, @idGenre)
 end
 go
-
-exec createMovieGenre 44, 'genre'
 
 select * from movieGenre
 select * from Genre

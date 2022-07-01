@@ -118,7 +118,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
         DataSource dataSource = DataSourceSingleton.getInstance();
         try (Connection con = dataSource.getConnection();
                 CallableStatement stmt = con.prepareCall(UPDATE_MOVIE)) {
-
+            //update movie
             stmt.setString("@" + TITLE, data.getTitle());
             stmt.setString("@" + PUB_DATE, data.getPubDate().format(Movie.DATE_FORMAT));
             stmt.setString("@" + DESC, data.getDescription());
@@ -130,6 +130,14 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
             stmt.setInt("@" + ID_MOVIE, id);
 
             stmt.executeUpdate();
+            
+            //update people
+            updatePerson(data.getDirector().getId(), data.getDirector());
+            
+            updateAllPeople(data.getActors());
+            //update genre
+            
+            //provjeri update slike
         }
     }
 
@@ -237,7 +245,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
                 CallableStatement stmt = con.prepareCall(CREATE_PERSON)) {
 
             stmt.setString("@" + FIRSTNAME, person.getFirstName());
-            stmt.setString("@" + LASTNAME, person.getFirstName());
+            stmt.setString("@" + LASTNAME, person.getLastName());
 
             stmt.registerOutParameter("@" + ID_PERSON, Types.INTEGER);
 
@@ -263,6 +271,13 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
                 //stmt.executeUpdate();
             }
         //}
+    }
+    
+    @Override
+    public void updateAllPeople(List<Person> people) throws Exception {
+        for (Person person : people) {
+            updatePerson(person.getId(), person);
+        }
     }
 
     @Override

@@ -5,6 +5,8 @@
  */
 package algebra.project.view;
 
+import algebra.project.dal.Repository;
+import algebra.project.dal.RepositoryFactory;
 import algebra.project.dal.parsers.rss.MovieParser;
 import algebra.project.model.Movie;
 import algebra.project.utils.MessageUtils;
@@ -25,6 +27,7 @@ public class GetMoviesPanel extends javax.swing.JPanel {
      * Creates new form GetMoviesPanel
      */
     
+    private Repository repository;
     private DefaultListModel<Movie> model = new DefaultListModel<>();
     
     public GetMoviesPanel() {
@@ -77,18 +80,18 @@ public class GetMoviesPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void btnGetMoviesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetMoviesActionPerformed
         try {
-            List<Movie> list = MovieParser.parse();
-            System.out.println("");
-        } catch (IOException | XMLStreamException ex) {
+            List<Movie> movies = MovieParser.parse();
+            repository.createAllMovies(movies);
+            loadModel();
+        } catch (Exception ex ) {
             Logger.getLogger(GetMoviesPanel.class.getName()).log(Level.SEVERE, null, ex);
             MessageUtils.showErrorMessage("Error", "Unable to get movies");
             System.exit(1);
         }
     }//GEN-LAST:event_btnGetMoviesActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGetMovies;
@@ -97,11 +100,19 @@ public class GetMoviesPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void initList() {
-        loadModel();
+        try {
+            repository = RepositoryFactory.getRepository();
+            model = new DefaultListModel<>();
+            loadModel();
+        } catch (Exception ex) {
+            Logger.getLogger(GetMoviesPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    private void loadModel() {
+    private void loadModel() throws Exception {
         model.clear();
-        
+        List<Movie> movies = repository.selectAllMovies();
+        movies.forEach(model::addElement);
+        listMovies.setModel(model);
     }
 }

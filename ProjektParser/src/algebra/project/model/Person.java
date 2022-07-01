@@ -70,8 +70,18 @@ public class Person {
     public static Person getPerson(String data, String roleName) {
         Person person = new Person();
         String[] name = data.split(NAME_DELIM);
-        person.setFirstName(name[0]);
-        person.setLastName(name[1]);// ovo radi probleme, treba staviti u foreach
+        if (name.length == 1) {
+            person.setFirstName(name[0]);
+            person.setLastName("");
+        }
+        else if (name.length == 2) {
+            person.setFirstName(name[0]);
+            person.setLastName(name[1]);
+        }
+        else if (name.length == 3) {
+            person.setFirstName(name[0] + "-" + name[1]);
+            person.setLastName(name[2]);
+        }
         person.setRoleType(roleName);
 
         return person;
@@ -101,7 +111,7 @@ public class Person {
 
         @Override
         public String toString() {
-            return roleName; //To change body of generated methods, choose Tools | Templates.
+            return roleName;
         }
 
         private static Optional<RoleType> getRoleFrom(String roleName) {
