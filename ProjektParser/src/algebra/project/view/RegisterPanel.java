@@ -5,12 +5,30 @@
  */
 package algebra.project.view;
 
+import algebra.project.UserForm;
+import algebra.project.dal.Repository;
+import algebra.project.dal.RepositoryFactory;
+import algebra.project.model.User;
+import algebra.project.utils.MessageUtils;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
+
 /**
  *
  * @author Kiki
  */
 public class RegisterPanel extends javax.swing.JPanel {
 
+    private List<JTextComponent> validationFields;
+    private User user;
+    private List<JLabel> errorLabels;
+    private Repository repository;
     /**
      * Creates new form RegisterForm
      */
@@ -35,13 +53,24 @@ public class RegisterPanel extends javax.swing.JPanel {
         tfConfirmPassword = new javax.swing.JTextField();
         btnRegister = new javax.swing.JButton();
         lblErrorPasswordMatch = new javax.swing.JLabel();
-        lblErrorUsernameExists = new javax.swing.JLabel();
+        lblErrorPassword = new javax.swing.JLabel();
+        lblErrorUsername = new javax.swing.JLabel();
+
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jLabel1.setText("Username:");
+
+        tfUsername.setName("Username"); // NOI18N
 
         jLabel2.setText("Password:");
 
         lblConfirmPassword.setText("Confirm password:");
+
+        tfConfirmPassword.setName("ConfirmPassword"); // NOI18N
 
         btnRegister.setText("Register");
         btnRegister.addActionListener(new java.awt.event.ActionListener() {
@@ -51,47 +80,47 @@ public class RegisterPanel extends javax.swing.JPanel {
         });
 
         lblErrorPasswordMatch.setForeground(java.awt.Color.red);
-        lblErrorPasswordMatch.setText("Passwords do not match");
 
-        lblErrorUsernameExists.setForeground(java.awt.Color.red);
-        lblErrorUsernameExists.setText("Username already exists");
+        lblErrorPassword.setForeground(java.awt.Color.red);
+
+        lblErrorUsername.setForeground(java.awt.Color.red);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(109, 109, 109)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(125, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnRegister, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                    .addComponent(btnRegister, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tfUsername)
                     .addComponent(tfPassword)
-                    .addComponent(tfConfirmPassword))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(lblErrorUsernameExists, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(lblErrorPasswordMatch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                    .addComponent(tfConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblErrorPasswordMatch, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblErrorPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblErrorUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(54, 54, 54)
+                .addGap(60, 60, 60)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tfUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblErrorUsernameExists, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblErrorUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblErrorPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -100,43 +129,90 @@ public class RegisterPanel extends javax.swing.JPanel {
                     .addComponent(lblErrorPasswordMatch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(83, Short.MAX_VALUE))
+                .addContainerGap(75, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
-        
+        if (!formValid()) {
+            return;
+        }
+        try {
+            repository.CreateUser(new User(
+                tfUsername.getText().trim(),
+                tfPassword.getText().trim(),
+                User.UserRoleType.USER.toString()
+            ));
+            JFrame userForm = new UserForm();
+            userForm.setVisible(true);
+            this.setVisible(false);
+            SwingUtilities.windowForComponent(this).dispose();
+        } catch (Exception ex) {
+            Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnRegisterActionPerformed
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        init();
+    }//GEN-LAST:event_formComponentShown
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegister;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel lblConfirmPassword;
+    private javax.swing.JLabel lblErrorPassword;
     private javax.swing.JLabel lblErrorPasswordMatch;
-    private javax.swing.JLabel lblErrorUsernameExists;
+    private javax.swing.JLabel lblErrorUsername;
     private javax.swing.JTextField tfConfirmPassword;
     private javax.swing.JTextField tfPassword;
     private javax.swing.JTextField tfUsername;
     // End of variables declaration//GEN-END:variables
-}
 
- /*private boolean formValid() {
+     private void init() {
+        try {
+            initValidation();
+            initRepository();
+        } catch (Exception ex) {
+            Logger.getLogger(EditMoviePanel.class.getName()).log(Level.SEVERE, null, ex);
+            MessageUtils.showErrorMessage("Unrecoverable", "Exiting...");
+            System.exit(1);
+        }
+    }
+
+    private void initValidation() {
+        validationFields = Arrays.asList(tfUsername, tfPassword, tfConfirmPassword);
+        errorLabels = Arrays.asList(lblErrorUsername, lblErrorPassword, lblErrorPasswordMatch);
+    }
+
+    private void initRepository() throws Exception {
+        repository = RepositoryFactory.getRepository();
+    }
+    
+     private boolean formValid() {
         boolean ok = true;
         
         for (int i = 0; i < validationFields.size(); i++) {
             ok &= !validationFields.get(i).getText().trim().isEmpty();
             errorLabels.get(i).setText(validationFields.get(i).getText().trim().isEmpty() ? "X" : "");
-            if (repository.CheckIfUsernameExists(validationFields.get(i).getText().trim())) {
-                errorLabels.get(i).setText(validationFields.get(i).getText().trim().isEmpty() ? "Username already exists" : "");
-                ok = false;  
-            }// provjeri je li su passwordi isti
-            if (repository.CheckIfPasswordCorrect(validationFields.get(i).getText().trim())) {
-                //zadaj  error message
-                ok = false;   
+            if ("Username".equals(validationFields.get(i).getName())) {
+                try {
+                    if (repository.CheckIfUsernameExists(validationFields.get(i).getText().trim())) {
+                        errorLabels.get(i).setText("Username already exists");
+                        ok = false;  
+                    }   
+                } catch (Exception ex) {
+                    Logger.getLogger(RegisterPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if ("ConfirmPassword".equals(validationFields.get(i).getName())){
+                if (!tfPassword.getText().equals(tfConfirmPassword.getText())) {
+                    errorLabels.get(i).setText("Passwords dont match");
+                    ok = false;   
+                }
             }
         }
         
         return ok;
-    }*/
+    }
+}

@@ -60,6 +60,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     private static final String USERNAME = "Username";
     private static final String PASSWORD = "Password";
     private static final String USER_ROLE_NAME = "RoleName";
+    private static final String RESULT = "result";
 
     //IDMovieGenre, MovieID, GenreID
     private static final String CREATE_MOVIE = "{ CALL createMovie (?,?,?,?,?,?,?,?) }";
@@ -80,7 +81,10 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     private static final String CREATE_MOVIE_GENRE = "{ CALL createMovieGenre (?,?) }";
     private static final String SELECT_MOVIE_GENRE = "{ CALL selectMovieGenre (?) }";
 
-    private static final String USERNAME_EXISTS = "{ CALL checkIfUserExists (?,?) }";
+    private static final String USER_EXISTS = "{ CALL checkIfUserExists (?,?) }";
+    private static final String USERNAME_EXISTS = "{ CALL checkIfUsernameExists (?) }";
+    private static final String CREATE_USER = "{ CALL createUser (?,?,?,?) }";
+
     
     private static final String DELETE_ALL = "{ CALL deleteAll }";
 
@@ -480,7 +484,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     public User checkIfUserExists(String username, String password) throws Exception {
         DataSource dataSource = DataSourceSingleton.getInstance();
         try (Connection con = dataSource.getConnection();
-                CallableStatement stmt = con.prepareCall(USERNAME_EXISTS)) {
+                CallableStatement stmt = con.prepareCall(USER_EXISTS)) {
 
             stmt.setString("@" + USERNAME, username);
             stmt.setString("@" + PASSWORD, password);
@@ -499,5 +503,41 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
         }
         return null;
     }
+
+    @Override
+    public boolean CheckIfUsernameExists(String username) throws Exception {
+        DataSource dataSource = DataSourceSingleton.getInstance();
+        try (Connection con = dataSource.getConnection();
+                CallableStatement stmt = con.prepareCall(USERNAME_EXISTS)) {
+
+            stmt.setString("@" + USERNAME, username);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    if (rs.getInt(RESULT) == 1) {
+                        return true;
+                    }  
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void CreateUser(User user) throws Exception {
+        DataSource dataSource = DataSourceSingleton.getInstance();
+        try (Connection con = dataSource.getConnection();
+                CallableStatement stmt = con.prepareCall(CREATE_USER)) {
+
+            stmt.setString("@" + USERNAME, user.getUsername().trim());
+            stmt.setString("@" + PASSWORD, user.getPassword().trim());
+            stmt.setString("@" + USER_ROLE_NAME, user.getRole().trim());
+
+            stmt.registerOutParameter("@" + ID_USER, Types.INTEGER);
+            
+            stmt.executeUpdate();
+        }
+    }
+
 
 }

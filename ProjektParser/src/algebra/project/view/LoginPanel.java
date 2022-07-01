@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -129,15 +130,16 @@ public class LoginPanel extends javax.swing.JPanel {
             return;
         }
         if (TryLoginUser()) {
-            if (user.getRole().equals(UserRoleType.ADMIN.toString())) {
+            if (user.getRole().equals(UserRoleType.ADMIN.toString())) {         
                 JFrame adminForm = new AdminForm();
                 adminForm.setVisible(true);
-                this.setVisible(false);
+                SwingUtilities.windowForComponent(this).dispose();
             }
             else if (user.getRole().equals( UserRoleType.USER.toString())) {
-                JFrame adminForm = new UserForm();
-                adminForm.setVisible(true);
+                JFrame userForm = new UserForm();
+                userForm.setVisible(true);
                 this.setVisible(false);
+                SwingUtilities.windowForComponent(this).dispose();
             }
         }
         else  
@@ -199,8 +201,7 @@ public class LoginPanel extends javax.swing.JPanel {
         try {
             user = repository.checkIfUserExists(tfUsername.getText().trim(), tfPassword.getText().trim());
         } catch (Exception ex) {
-            Logger.getLogger(LoginPanel.class.getName()).log(Level.SEVERE, null, ex);
-            
+            Logger.getLogger(LoginPanel.class.getName()).log(Level.SEVERE, null, ex); 
         }
         
         return user != null;   

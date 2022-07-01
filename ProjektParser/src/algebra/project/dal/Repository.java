@@ -48,4 +48,7 @@ public interface Repository {
 
     public User checkIfUserExists(String username, String password) throws Exception;
 
+    public boolean CheckIfUsernameExists(String username) throws Exception;
+
+    public void CreateUser(User user)throws Exception;
 }

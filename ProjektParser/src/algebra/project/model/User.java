@@ -24,7 +24,9 @@ public class User {
         return Role;
     }
 
-    
+    public String getPassword() {
+        return Password;
+    }
     
     public User(int id, String Username, String Password, String Role) {
         this.id = id;
@@ -32,6 +34,14 @@ public class User {
         this.Password = Password;
         this.Role = Role;
     }
+
+    public User(String Username, String Password, String Role) {
+        this.Username = Username;
+        this.Password = Password;
+        this.Role = Role;
+    }
+    
+    
     
      public enum UserRoleType {
         ADMIN("Admin"),

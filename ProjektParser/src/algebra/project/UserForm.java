@@ -5,6 +5,8 @@
  */
 package algebra.project;
 
+import algebra.project.view.EditMoviePanel;
+
 /**
  *
  * @author Kiki
@@ -15,7 +17,8 @@ public class UserForm extends javax.swing.JFrame {
      * Creates new form UserForm
      */
     public UserForm() {
-        initComponents();
+        initComponents(); 
+        configurePanels();
     }
 
     /**
@@ -27,20 +30,23 @@ public class UserForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        tpContent = new javax.swing.JTabbedPane();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(tpContent, javax.swing.GroupLayout.DEFAULT_SIZE, 1084, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(tpContent, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE)
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -79,5 +85,11 @@ public class UserForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTabbedPane tpContent;
     // End of variables declaration//GEN-END:variables
+
+     private void configurePanels() {
+        tpContent.add(EDIT_MOVIES, new EditMoviePanel());
+    }
+    private static final String EDIT_MOVIES = "Edit movies";
 }

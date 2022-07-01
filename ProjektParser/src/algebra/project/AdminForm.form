@@ -23,28 +23,19 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
-              <Component id="jLabel1" min="-2" pref="234" max="-2" attributes="0"/>
-              <EmptySpace pref="95" max="32767" attributes="0"/>
-          </Group>
+          <Component id="tpContent" alignment="0" pref="494" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="118" max="-2" attributes="0"/>
-              <Component id="jLabel1" min="-2" pref="77" max="-2" attributes="0"/>
-              <EmptySpace pref="105" max="32767" attributes="0"/>
-          </Group>
+          <Component id="tpContent" alignment="0" pref="453" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="jLabel1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="ADMIN FORM"/>
-      </Properties>
-    </Component>
+    <Container class="javax.swing.JTabbedPane" name="tpContent">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+    </Container>
   </SubComponents>
 </Form>

@@ -311,11 +311,6 @@ if	not exists (select * from Genre where GenreName = @Genre)
 end
 go
 
-select * from movieGenre
-select * from Genre
-select * from movie
-
-
 create proc selectMovieGenre
 	@MovieID int
 as
@@ -350,13 +345,41 @@ create proc checkIfUserExists
 	@Password nvarchar(250)
 as
 begin
-	if	not exists (select * from AppUser where Username =  @Username and Password = @Password)
-	begin
-		select 1
-	end
+	select * from AppUser as u
+	inner join appuserrole as r on
+	u.UserRoleID = r.IDAppUserRole
+	where Username =  @Username and Password = @Password
+
+end
+go
+
+create proc checkIfUsernameExists
+	@Username nvarchar(250)
+as
+begin
+	if exists (select * from AppUser where Username = @Username)
+		begin
+			select 1 as 'result' 
+		end
 	else
 		begin
-			select 1
+			select 0 as 'result'
 		end
+end
+go
+
+create proc createUser
+	@Username nvarchar(250),
+	@Password nvarchar(250),
+	@RoleName nvarchar(250),
+	@IDAppUser int output
+as
+begin
+--if	not exists (select * from Person where Firstname =  @Firstname and Lastname = @Lastname
+	declare @userRoleID int
+	select @userRoleID = IDAppUserRole from AppUserRole where RoleName = @RoleName
+	INSERT INTO AppUser(Username, Password, UserRoleID) 
+	VALUES(@Username, @Password, @userRoleID)
+	SET @IDAppUser = SCOPE_IDENTITY()
 end
 go
