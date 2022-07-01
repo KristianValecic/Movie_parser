@@ -13,9 +13,11 @@ import algebra.project.dal.Repository;
 import algebra.project.model.Movie;
 import algebra.project.model.Person;
 import algebra.project.model.Person.RoleType;
+import algebra.project.model.User;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,6 +54,12 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     //MovieGenre
     private static final String GENRE = "Genre";
     private static final String GENRE_NAME = "GenreName";
+    
+    //AppUser
+    private static final String ID_USER = "IDAppUser";
+    private static final String USERNAME = "Username";
+    private static final String PASSWORD = "Password";
+    private static final String USER_ROLE_NAME = "RoleName";
 
     //IDMovieGenre, MovieID, GenreID
     private static final String CREATE_MOVIE = "{ CALL createMovie (?,?,?,?,?,?,?,?) }";
@@ -71,6 +79,8 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
 
     private static final String CREATE_MOVIE_GENRE = "{ CALL createMovieGenre (?,?) }";
     private static final String SELECT_MOVIE_GENRE = "{ CALL selectMovieGenre (?) }";
+
+    private static final String USERNAME_EXISTS = "{ CALL checkIfUserExists (?,?) }";
     
     private static final String DELETE_ALL = "{ CALL deleteAll }";
 
@@ -465,4 +475,29 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
             stmt.executeUpdate();
         }
     }
+
+    @Override
+    public User checkIfUserExists(String username, String password) throws Exception {
+        DataSource dataSource = DataSourceSingleton.getInstance();
+        try (Connection con = dataSource.getConnection();
+                CallableStatement stmt = con.prepareCall(USERNAME_EXISTS)) {
+
+            stmt.setString("@" + USERNAME, username);
+            stmt.setString("@" + PASSWORD, password);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return 
+                        new User(
+                            rs.getInt(ID_USER),
+                            rs.getString(USERNAME),
+                            rs.getString(PASSWORD),
+                            rs.getString(USER_ROLE_NAME)
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
 }

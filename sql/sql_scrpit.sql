@@ -42,6 +42,7 @@ create table AppUser (
 	IDAppUser int primary key identity(1,1),
 	Username nvarchar(250),
 	Password nvarchar(250),
+	UserRoleID int
 )
 go
 
@@ -51,18 +52,29 @@ create table AppUserRole (
 )
 go
 
-/*fill AppUser roles*/
+/*seed AppUser roles*/
 insert into AppUserRole(RoleName)
-values('Admin'), ('User'), ('Redatelj'), ('Glumac')
+values('Admin'), ('User')
+go
+
+/*seed AppUsers with roles*/
+declare @adminID int
+select @adminID = IDAppUserRole from AppUserRole
+where RoleName = 'admin'
+declare @UserID int
+select @UserID = IDAppUserRole from AppUserRole
+where RoleName = 'user'
+insert into AppUser(Username, Password, UserRoleID)
+values('admin', 'admin', @adminID), ('User', 'user', @UserID)
 go
 
 
-create table AssignedAppUserRoles (
+/*create table AssignedAppUserRoles (
 	IDAssignedAppUserRoles int primary key identity(1,1),
 	UserRoleID int,
 	AppUserID int
 )
-go
+go*/
 
 create table MovieRole (
 	IDMovieRole int primary key identity(1,1),
@@ -333,4 +345,18 @@ begin
 end
 go
 
-
+create proc checkIfUserExists
+	@Username nvarchar(250),
+	@Password nvarchar(250)
+as
+begin
+	if	not exists (select * from AppUser where Username =  @Username and Password = @Password)
+	begin
+		select 1
+	end
+	else
+		begin
+			select 1
+		end
+end
+go

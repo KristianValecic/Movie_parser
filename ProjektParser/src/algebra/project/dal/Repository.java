@@ -7,6 +7,7 @@ package algebra.project.dal;
 
 import algebra.project.model.Movie;
 import algebra.project.model.Person;
+import algebra.project.model.User;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +45,7 @@ public interface Repository {
     List<String> selectMovieGenres(int movieID) throws Exception;
     
     void deleteAll() throws Exception;
-    
+
+    public User checkIfUserExists(String username, String password) throws Exception;
+
 }

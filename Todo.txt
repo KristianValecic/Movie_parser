@@ -1,8 +1,7 @@
 DELETE ALL i vidi zasto parsirani filmovi nemaju glumce i zanrove
+parse ne unosi person i zanre, POPRAVI!!!
 
 provjeri kako radi update nakon sto si napravio rss parser load u bazu
-
-treba provjeriti getPerson sa stringom bez razmaka
 
 rijesi format 1.2.2022 (parsiraj s delim tockom i onda fillaj u datTimeFormat)
 
