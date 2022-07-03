@@ -677,7 +677,8 @@ public class EditMoviePanel extends javax.swing.JPanel {
         tfPubDate.setText(movie.getPubDate().format(Movie.DATE_FORMAT));
         tfStartDate.setText(movie.getStartDate());
         loadActors(movie);
-        loadDirectors(movie);   
+        loadDirectors(movie); 
+        loadGenres(movie);
         if (movie.getPosterPath() != null && Files.exists(Paths.get(movie.getPosterPath()))) {
             tfPosterPath.setText(movie.getPosterPath());
             setIcon(lblIcon, new File(movie.getPosterPath()));

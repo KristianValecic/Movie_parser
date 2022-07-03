@@ -1,21 +1,13 @@
-dovrsi update user panelu
-(
-	micanje fielda za rezisera, napraviti da se moze dragNDropati u njega
-	reset polja
-	popravi redoslijed punjenja listi, neka se svaka lista napuni u odg. load fji
-	
-
-)
+pozadinska dretva za getanja moviea (3. video na oko 1:16)
+forma za dodavanje zanrova
+dodati negdje jmenu
 
 heshiraj password
 mozda napravci jaxb save u dat
 
 rijesi format 1.2.2022 (parsiraj s delim tockom i onda fillaj u datTimeFormat)
 
-pocisti parsanje descriptiona (s xml eventom)
-
 Dodoaj getMovie u pozadinsku dretvu
-
 
 2012-12-12T11:23:33
 
@@ -29,15 +21,7 @@ Admin forma:
 mozda staviti brisanje slika u pozadinsku dretvu
 
 User forma:
-reziser, glumci se ne mogu mijenjati u editMovie, imaju svoj panel s drag n dropom
+edit genres
 
 AKO IMAS VREMENA
 napravi formValid u Utilsu
-
-NEKI DESC NEMAJU DIV
-<img src="https://www.blitz-cinestar.hr/resize.aspx?filename=Plakats/27.6.2022_15_40_26_1_Up_HR.jpg&amp;width=100" hspace="3" vspace="3" align="left">
-	<div style="text-align: justify;">
-		Ova neobično zabavna komedija prati V (Paris Berelc), natjecateljicu koja je impresivnim vještinama osvojila stipendiju za fakultet i mjesto u eSport timu u kojem dominiraju muškarci. V nije baš najbolje primljena od strane suigrača.  Međutim, igra se nastavlja. Pridružila joj se najbolja prijateljica Sloane (Hari Nef), a pod vodstvom svoje trenerice (Ruby Rose), V i žestoki ženski tim zajedno napreduje do zajedničkog cilja: pobijediti frajere koji im nisu htjeli dali priliku!
-	</div>
-<br />
-Početak prikazivanja: 7.7.2022

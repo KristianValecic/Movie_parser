@@ -316,6 +316,9 @@ public class EditPersonPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btnUpdatePeopleActionPerformed
 
     private void btnDeletePersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeletePersonActionPerformed
+        if (lsAllPeople.getSelectedValue() == null) {
+            MessageUtils.showInformationMessage("Error", "Select a person to delete");
+        }
         try {
             repository.deletePerson(lsAllPeople.getSelectedValue().getId());
             actors.remove(lsAllPeople.getSelectedValue());
@@ -329,11 +332,17 @@ public class EditPersonPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btnDeletePersonActionPerformed
 
     private void btnDeleteDirectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteDirectorActionPerformed
+        if (lsDirectors.getSelectedValue() == null) {
+            MessageUtils.showInformationMessage("Error", "Select a director to delete");
+        }
         directors.remove(lsDirectors.getSelectedValue());
         loadDirectors();
     }//GEN-LAST:event_btnDeleteDirectorActionPerformed
 
     private void btnDeleteActorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActorActionPerformed
+        if (lsActors.getSelectedValue() == null) {
+            MessageUtils.showInformationMessage("Error", "Select a actor to delete");
+        }
         actors.remove(lsActors.getSelectedValue());
         loadActors();
     }//GEN-LAST:event_btnDeleteActorActionPerformed

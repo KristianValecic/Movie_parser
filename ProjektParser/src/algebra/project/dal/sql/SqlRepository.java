@@ -234,17 +234,6 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
             for (Movie movie : movies) {
 
                 createMovie(movie);
-                /*stmt.setString("@" + TITLE, movie.getTitle());
-                stmt.setString("@" + PUB_DATE, movie.getPubDate().toString()); //.format(Article.DATE_FORMATTER)
-                stmt.setString("@" + DESC, movie.getDescription());
-                stmt.setString("@" + ORIG_NAME, movie.getOrigName());
-                stmt.setInt("@" + DURATION, movie.getDuration());
-                stmt.setString("@" + POSTER_PATH, movie.getPosterPath());
-                stmt.setString("@" + START_DATE, movie.getStartDate());
-
-                stmt.registerOutParameter("@" + ID_MOVIE, Types.INTEGER);
-                stmt.executeUpdate();*/
-
             }
     }
 
