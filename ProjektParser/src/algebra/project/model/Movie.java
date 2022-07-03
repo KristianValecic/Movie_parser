@@ -18,6 +18,7 @@ import java.util.List;
 public class Movie {
 
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    public static final DateTimeFormatter DATE_START_FORMAT = DateTimeFormatter.ofPattern("dd.MM.YYYY");
     private static final String DELIM = ", ";
     
     private int id;

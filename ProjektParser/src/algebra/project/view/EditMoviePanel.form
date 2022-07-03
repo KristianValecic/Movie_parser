@@ -299,6 +299,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfDuration">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="Duration" noResource="true"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfPosterPath">
       <Properties>
@@ -422,6 +425,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfStartDate">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="StartDate" noResource="true"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel11">
       <Properties>

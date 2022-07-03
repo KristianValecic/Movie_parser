@@ -29,6 +29,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  *
@@ -86,7 +89,7 @@ public class MovieParser {
                                     break;
                                 case DESCRIPTION:
                                     if (!data.isEmpty()) {
-                                        movie.setDescription(data);
+                                       movie.setDescription(ParseDescription(data));
                                     }
                                     break;
                                 case ORIGNAME:
@@ -135,11 +138,7 @@ public class MovieParser {
         return movies;
     }
 
-
-
-
-
-        private static void handlePicture(Movie movie, String pictureUrl) {
+    private static void handlePicture(Movie movie, String pictureUrl) {
         try {
             String ext = pictureUrl.substring(pictureUrl.lastIndexOf("."));
             if (ext.length() > 4 ) {
@@ -153,6 +152,14 @@ public class MovieParser {
         } catch (IOException ex) {
             Logger.getLogger(MovieParser.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private static String ParseDescription(String data) {
+        if (data == null) {
+            return "";
+        }
+        Document doc = Jsoup.parse(data);
+        return doc.body().text();
     }
     
     private enum TagType {

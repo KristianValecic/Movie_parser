@@ -25,7 +25,7 @@ public interface Repository {
     Optional<Movie> selectMovie(int id) throws Exception;
     List<Movie> selectAllMovies() throws Exception;
     
-    //person 
+    //person
     int createPerson(Person person) throws Exception;
     void createAllPeople(List<Person> people) throws Exception;
     void updateAllPeople(List<Person> people) throws Exception;

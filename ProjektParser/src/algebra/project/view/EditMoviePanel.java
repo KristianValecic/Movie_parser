@@ -138,6 +138,8 @@ public class EditMoviePanel extends javax.swing.JPanel {
 
         jLabel5.setText("Duration");
 
+        tfDuration.setName("Duration"); // NOI18N
+
         tfPosterPath.setEditable(false);
 
         jLabel6.setText("Poster path");
@@ -210,6 +212,8 @@ public class EditMoviePanel extends javax.swing.JPanel {
         jLabel9.setText("Genre");
 
         jLabel10.setText("Start date");
+
+        tfStartDate.setName("StartDate"); // NOI18N
 
         jLabel11.setText("Publish date");
 
@@ -449,7 +453,6 @@ public class EditMoviePanel extends javax.swing.JPanel {
             return;
         }
         try {
-            String localPicturePath = uploadPicture();
             Movie movie = new Movie();
             
             movie.setTitle(tfTitle.getText().trim());
@@ -460,8 +463,10 @@ public class EditMoviePanel extends javax.swing.JPanel {
             //Person.getPersonList(taActors.getText().trim(), taActors.getName()),
             movie.setDuration(Integer.parseInt(tfDuration.getText().trim()));
             //Movie.getGenreFromString(taGenre.getText().trim()),
-            movie.setPosterPath(tfPosterPath.getText().trim());
             movie.setStartDate(tfStartDate.getText().trim());
+            
+            String localPicturePath = uploadPicture();
+            movie.setPosterPath(localPicturePath);
 
             if (repository.createMovie(movie) == 0) {
                 MessageUtils.showErrorMessage("Error", "This movie already exists");
@@ -592,6 +597,24 @@ public class EditMoviePanel extends javax.swing.JPanel {
             if ("PubDate".equals(validationFields.get(i).getName())) {
                 try {
                     LocalDateTime.parse(validationFields.get(i).getText().trim(), Movie.DATE_FORMAT);
+                    errorLabels.get(i).setText("");
+                } catch (Exception e) {
+                    ok = false;
+                    errorLabels.get(i).setText("X");
+                }
+            }
+            /*if ("StartDate".equals(validationFields.get(i).getName())) {
+                try {
+                    LocalDateTime.parse(date, Movie.DATE_START_FORMAT);
+                    errorLabels.get(i).setText("");
+                } catch (Exception e) {
+                    ok = false;
+                    errorLabels.get(i).setText("X");
+                }
+            }*/
+            if ("Duration".equals(validationFields.get(i).getName())) {
+                try {
+                   Integer.parseInt(validationFields.get(i).getText().trim());
                     errorLabels.get(i).setText("");
                 } catch (Exception e) {
                     ok = false;
