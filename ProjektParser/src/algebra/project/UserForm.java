@@ -6,6 +6,7 @@
 package algebra.project;
 
 import algebra.project.view.EditMoviePanel;
+import algebra.project.view.EditPersonPanel;
 
 /**
  *
@@ -90,6 +91,8 @@ public class UserForm extends javax.swing.JFrame {
 
      private void configurePanels() {
         tpContent.add(EDIT_MOVIES, new EditMoviePanel());
+        tpContent.add(EDIT_MOVIE_ROLES, new EditPersonPanel());
     }
     private static final String EDIT_MOVIES = "Edit movies";
+    private static final String EDIT_MOVIE_ROLES = "Edit movie roles";
 }

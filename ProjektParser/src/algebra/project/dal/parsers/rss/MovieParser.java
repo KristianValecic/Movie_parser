@@ -96,7 +96,7 @@ public class MovieParser {
                                     break;
                                 case DIRECTOR:
                                     if (!data.isEmpty()) {
-                                        movie.setDirector(Person.getPerson(data, TagType.DIRECTOR.getTagName()));
+                                        movie.setDirector(Person.getPersonList(data, TagType.DIRECTOR.getTagName()));
                                     }
                                     break;
                                 case ACTORS:
@@ -132,7 +132,6 @@ public class MovieParser {
                 }
             }
         }
-
         return movies;
     }
 

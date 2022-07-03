@@ -25,7 +25,7 @@ public class Movie {
     private LocalDateTime pubDate;
     private String description;
     private String origName;
-    private Person director;
+    private List<Person> director;
     private List<Person> actors;
     private int duration; // setter prima string i pretvara u int
     private List<String> genre;
@@ -44,12 +44,12 @@ public class Movie {
         this.posterPath = posterPath;
         this.startDate = startDate;
     }*/
-    public Movie(int id, String title, LocalDateTime pubDate, String description, String origName, Person director, List<Person> actors, int duration, List<String> genre, String posterPath, String startDate) {
+    public Movie(int id, String title, LocalDateTime pubDate, String description, String origName, List<Person> director, List<Person> actors, int duration, List<String> genre, String posterPath, String startDate) {
         this(title, pubDate, description, origName, director, actors, duration, genre, posterPath, startDate);
         this.id = id;
     }
 
-    public Movie(String title, LocalDateTime pubDate, String description, String origName, Person director, List<Person> actors, int duration, List<String> genre, String posterPath, String startDate) {
+    public Movie(String title, LocalDateTime pubDate, String description, String origName, List<Person> director, List<Person> actors, int duration, List<String> genre, String posterPath, String startDate) {
 
         this.title = title;
         this.pubDate = pubDate;
@@ -72,6 +72,13 @@ public class Movie {
         return genres;
     }
 
+    @Override
+    public String toString() {
+        return title + ", duration: " + duration + ", genre: " + genre;
+    }
+
+    
+    
     public int getId() {
         return id;
     }
@@ -108,11 +115,11 @@ public class Movie {
         this.origName = origName;
     }
 
-    public Person getDirector() {
+    public List<Person> getDirector() {
         return director;
     }
-
-    public void setDirector(Person director) {
+    
+    public void setDirector(List<Person> director) {
         this.director = director;
     }
 

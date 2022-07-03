@@ -100,13 +100,6 @@ go
 
 --PROCEDURES
 
-select * from Genre
-select * from Movie	
-select * from MovieGenre
-select * from Person
-select * from PersonRole
-select * from MovieRole
-
 create proc createMovie
 	@Title NVARCHAR(250),
 	@PublishDate NVARCHAR(250),
@@ -117,10 +110,15 @@ create proc createMovie
 	@StartDate NVARCHAR(250),
 	@IDMovie INT OUTPUT
 as
-begin 
-	INSERT INTO Movie 
-	VALUES(@Title, @PublishDate, @MovieDescription, @OriginalName, @Duration, @PosterPath, @StartDate)
-	SET @IDMovie = SCOPE_IDENTITY()
+begin
+	if not exists (select * from Movie where
+	 Title = @Title and PublishDate = @PublishDate and MovieDescription = @MovieDescription and
+	 OriginalName = @OriginalName and Duration = @Duration and PosterPath = @PosterPath and StartDate = @StartDate)
+	begin
+		INSERT INTO Movie 
+		VALUES(@Title, @PublishDate, @MovieDescription, @OriginalName, @Duration, @PosterPath, @StartDate)
+		SET @IDMovie = SCOPE_IDENTITY()
+	end
 end
 go
 
@@ -166,8 +164,6 @@ begin
 end
 go
 
-exec deleteMovie 9
-
 create proc selectMovie
 	@IDMovie INT 
 as
@@ -191,7 +187,7 @@ create proc createPerson
 	@Lastname nvarchar(250),
 	@IDPerson INT OUTPUT
 as
-begin -- create person only if he doesnt already exist
+begin
 if	not exists (select * from Person where Firstname =  @Firstname and Lastname = @Lastname)
 	begin
 		INSERT INTO Person 
@@ -219,6 +215,9 @@ create proc deletePerson
 	@IDPerson INT 
 as
 begin 
+	delete from MovieRole
+	where PersonID = @IDPerson
+
 	Delete 
 	from Person
 	where IDPerson = @IDPerson
@@ -272,9 +271,13 @@ begin
 	select @personID = IDPerson from Person where --checks if person already exists
 	Firstname = SUBSTRING(@PersonName, 0, CHARINDEX(' ', @PersonName)) and
 	Lastname = SUBSTRING(@PersonName,  CHARINDEX(' ', @PersonName) +1 , len(@PersonName))
-	
-	insert into MovieRole(MovieID, PersonID, PersonRoleID)
-	values (@MovieID, @PersonID, @roleID)
+
+	if not exists (select * from MovieRole 
+	where MovieID = @MovieID and PersonID = @personID and PersonRoleID = @roleID)
+	begin
+		insert into MovieRole(MovieID, PersonID, PersonRoleID)
+		values (@MovieID, @PersonID, @roleID)
+	end
 end
 go
 
@@ -288,10 +291,19 @@ begin
 	p.IDPerson = mr.PersonID
 	inner join PersonRole as pr on
 	mr.PersonRoleID = pr.IDPersonRole
-	where MovieID = @MovieID and
+	where MovieID = 960@MovieID and
 	RoleName = @roleName
 end
 go
+
+create proc deleteAllMovieRoles
+	@MovieID int
+as
+begin 
+	delete from MovieRole where MovieID = @MovieID
+end
+go
+
 
 
 create proc createMovieGenre

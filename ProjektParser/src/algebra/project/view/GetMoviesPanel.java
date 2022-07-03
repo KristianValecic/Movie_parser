@@ -11,10 +11,13 @@ import algebra.project.dal.parsers.rss.MovieParser;
 import algebra.project.model.Movie;
 import algebra.project.utils.MessageUtils;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 /**
@@ -46,11 +49,21 @@ public class GetMoviesPanel extends javax.swing.JPanel {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         listMovies = new javax.swing.JList<>();
+        btnDeleteAll = new javax.swing.JButton();
         btnGetMovies = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(1060, 700));
 
         jScrollPane1.setViewportView(listMovies);
+
+        btnDeleteAll.setBackground(java.awt.Color.red);
+        btnDeleteAll.setForeground(java.awt.Color.white);
+        btnDeleteAll.setText("Delete all");
+        btnDeleteAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteAllActionPerformed(evt);
+            }
+        });
 
         btnGetMovies.setText("Get movies from internet source");
         btnGetMovies.addActionListener(new java.awt.event.ActionListener() {
@@ -65,22 +78,41 @@ public class GetMoviesPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
-                    .addComponent(btnGetMovies, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnGetMovies, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDeleteAll, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnGetMovies, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(btnGetMovies, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnDeleteAll, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
+    private void btnDeleteAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteAllActionPerformed
+        if (MessageUtils.showConfirmDialog("Are you sure?", "Are you sure?") == JOptionPane.YES_OPTION) {
+            try {
+                for (Movie movie : repository.selectAllMovies()) {
+                    if (movie.getPosterPath() != null) {
+                        Files.deleteIfExists(Paths.get(movie.getPosterPath()));
+                    }
+                }
+                repository.deleteAll();
+                loadModel();
+            } catch (Exception ex) {
+                Logger.getLogger(GetMoviesPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnDeleteAllActionPerformed
+
     private void btnGetMoviesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetMoviesActionPerformed
         try {
             List<Movie> movies = MovieParser.parse();
@@ -94,6 +126,7 @@ public class GetMoviesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btnGetMoviesActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDeleteAll;
     private javax.swing.JButton btnGetMovies;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JList<Movie> listMovies;

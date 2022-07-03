@@ -14,6 +14,7 @@ import algebra.project.model.Movie;
 import algebra.project.model.Person;
 import algebra.project.model.Person.RoleType;
 import algebra.project.model.User;
+import algebra.project.utils.MessageUtils;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
+import javax.swing.JOptionPane;
 
 public class SqlRepository implements Repository { //MovieRepository, PersonRepository, MovieRoleRepository, MovieGenreRepository {
 
@@ -77,6 +79,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
 
     private static final String CREATE_MOVIE_ROLE = "{ CALL createMovieRole (?,?,?) }";
     private static final String SELECT_MOVIE_ROLE = "{ CALL selectMovieRole (?,?) }";
+    private static final String DELETE_ALL_MOVIE_ROLES = "{ CALL deleteAllMovieRoles (?) }";
 
     private static final String CREATE_MOVIE_GENRE = "{ CALL createMovieGenre (?,?) }";
     private static final String SELECT_MOVIE_GENRE = "{ CALL selectMovieGenre (?) }";
@@ -84,7 +87,6 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     private static final String USER_EXISTS = "{ CALL checkIfUserExists (?,?) }";
     private static final String USERNAME_EXISTS = "{ CALL checkIfUsernameExists (?) }";
     private static final String CREATE_USER = "{ CALL createUser (?,?,?,?) }";
-
     
     private static final String DELETE_ALL = "{ CALL deleteAll }";
 
@@ -101,28 +103,25 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
             stmt.setInt("@" + DURATION, movie.getDuration());
             stmt.setString("@" + POSTER_PATH, movie.getPosterPath());
             stmt.setString("@" + START_DATE, movie.getStartDate());
-
             
             stmt.registerOutParameter("@" + ID_MOVIE, Types.INTEGER);
 
             stmt.executeUpdate();
 
             //creating director
-            createPerson(movie.getDirector());
-            String roleName = ParseOptionalString(movie.getDirector().getRoleType().toString());
-            //  popravit person id
-            createMovieRole(stmt.getInt("@" + ID_MOVIE), movie.getDirector(), roleName);
+            createAllPeople(movie.getDirector());
+            createAllMovieRoles(stmt.getInt("@" + ID_MOVIE), movie.getDirector(), RoleType.DIRECTOR.toString());
             
-            createAllPeople(movie.getActors());// ovdje pukne
-            roleName = ParseOptionalString(movie.getActors().get(0).getRoleType().toString());
-            createAllMovieRoles(stmt.getInt("@" + ID_MOVIE), movie.getActors(), roleName);
-            
-            //zanr punkne
+            createAllPeople(movie.getActors());
+            createAllMovieRoles(stmt.getInt("@" + ID_MOVIE), movie.getActors(), RoleType.ACTOR.toString());
+
             List<String> genres = movie.getGenre();
-            for (String genre : genres) {
-                createMovieGenre(stmt.getInt("@" + ID_MOVIE), genre);
+            if (genres != null) {
+                for (String genre : genres) {
+                    createMovieGenre(stmt.getInt("@" + ID_MOVIE), genre);
+                }  
             }
-            
+                       
             return stmt.getInt("@" + ID_MOVIE);
         }
     }
@@ -146,8 +145,9 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
             stmt.executeUpdate();
             
             //update people
-            updatePerson(data.getDirector().getId(), data.getDirector());
-            
+            //updatePerson(data.getDirector().getId(), data.getDirector());
+            updateAllPeople(data.getDirector());
+                    
             updateAllPeople(data.getActors());
             //update genre
             
@@ -183,7 +183,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
                                     LocalDateTime.parse(rs.getString(PUB_DATE), Movie.DATE_FORMAT),
                                     rs.getString(DESC),
                                     rs.getString(ORIG_NAME),
-                                    selectMovieRole(id, RoleType.DIRECTOR.toString()), // director
+                                    selectAllMovieRoles(id, RoleType.DIRECTOR.toString()), // director
                                     //rs.getString(),
                                     //rs.getString(), 
                                     selectAllMovieRoles(id, RoleType.ACTOR.toString()),// actors
@@ -216,7 +216,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
                                 LocalDateTime.parse(rs.getString(PUB_DATE), Movie.DATE_FORMAT),// tu je problem
                                 rs.getString(DESC),
                                 rs.getString(ORIG_NAME),//provjeri je li dobar id
-                                selectMovieRole(rs.getInt(ID_MOVIE), RoleType.DIRECTOR.toString()),
+                                selectAllMovieRoles(rs.getInt(ID_MOVIE), RoleType.DIRECTOR.toString()),
                                 selectAllMovieRoles(rs.getInt(ID_MOVIE), RoleType.ACTOR.toString()),
                                 rs.getInt(DURATION),
                                 selectMovieGenres(rs.getInt(ID_MOVIE)),
@@ -231,13 +231,10 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
 
     @Override
     public void createAllMovies(List<Movie> movies) throws Exception {
-        DataSource dataSource = DataSourceSingleton.getInstance();
-        try (Connection con = dataSource.getConnection();
-                CallableStatement stmt = con.prepareCall(CREATE_MOVIE)) {
-
             for (Movie movie : movies) {
 
-                stmt.setString("@" + TITLE, movie.getTitle());
+                createMovie(movie);
+                /*stmt.setString("@" + TITLE, movie.getTitle());
                 stmt.setString("@" + PUB_DATE, movie.getPubDate().toString()); //.format(Article.DATE_FORMATTER)
                 stmt.setString("@" + DESC, movie.getDescription());
                 stmt.setString("@" + ORIG_NAME, movie.getOrigName());
@@ -246,10 +243,9 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
                 stmt.setString("@" + START_DATE, movie.getStartDate());
 
                 stmt.registerOutParameter("@" + ID_MOVIE, Types.INTEGER);
-                stmt.executeUpdate();
+                stmt.executeUpdate();*/
 
             }
-        }
     }
 
     @Override
@@ -271,20 +267,12 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
 
     @Override
     public void createAllPeople(List<Person> people) throws Exception {
-        //DataSource dataSource = DataSourceSingleton.getInstance();
-        //try (Connection con = dataSource.getConnection();
-          //      CallableStatement stmt = con.prepareCall(CREATE_PERSON)) {
-
-            for (Person person : people) {
-
-                //stmt.setString("@" + FIRSTNAME, person.getFirstName());
-                //stmt.setString("@" + LASTNAME, person.getFirstName());
-
-                //stmt.registerOutParameter("@" + ID_PERSON, Types.INTEGER);
-                createPerson(person);
-                //stmt.executeUpdate();
-            }
-        //}
+        if(people == null){
+            return;
+        }
+        for (Person person : people) {
+            createPerson(person);
+        }
     }
     
     @Override
@@ -378,6 +366,9 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
 
     @Override
     public void createAllMovieRoles(int movieID, List<Person> people, String roleName) throws Exception {
+        if (people == null) {
+            return;
+        }
         for (Person person : people) {
             createMovieRole(movieID, person, roleName);
         }
@@ -539,5 +530,15 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
         }
     }
 
+    @Override
+    public void deleteAllMovieRoles(int id) throws Exception {
+        DataSource dataSource = DataSourceSingleton.getInstance();
+        try (Connection con = dataSource.getConnection();
+                CallableStatement stmt = con.prepareCall(DELETE_ALL_MOVIE_ROLES)) {
 
+            stmt.setInt("@" + MOVIE_ID, id);
+
+            stmt.executeUpdate();
+        }
+    }
 }

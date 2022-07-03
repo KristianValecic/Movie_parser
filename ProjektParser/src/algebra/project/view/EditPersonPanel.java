@@ -5,14 +5,29 @@
  */
 package algebra.project.view;
 
+import algebra.project.dal.Repository;
+import algebra.project.dal.RepositoryFactory;
 import algebra.project.dal.parsers.rss.MovieParser;
 import algebra.project.model.Movie;
+import algebra.project.model.Person;
+import algebra.project.model.PersonTransferable;
 import algebra.project.utils.MessageUtils;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.DropMode;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
+import javax.swing.text.JTextComponent;
 import javax.xml.stream.XMLStreamException;
 
 /**
@@ -24,12 +39,22 @@ public class EditPersonPanel extends javax.swing.JPanel {
     /**
      * Creates new form GetMoviesPanel
      */
+    private Repository repository;
+    private List<JTextComponent> validationFields;
+    //private List<JTextComponent> allPanelComponents;
+    private List<JLabel> errorLabels;
     
-    private DefaultListModel<Movie> model = new DefaultListModel<>();
+    private List<Person> actors;
+    private List<Person> directors;
+    private List<Person> allPeople;
+    private Movie selectedMovie;
+    
+    private DefaultListModel<Person> actorsModel = new DefaultListModel<>();
+    private DefaultListModel<Person> directorsModel = new DefaultListModel<>();
+    private DefaultListModel<Person> allPeopleModel = new DefaultListModel<>();
     
     public EditPersonPanel() {
         initComponents();
-        initList();
     }
 
     /**
@@ -41,30 +66,455 @@ public class EditPersonPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lblMovieTitle = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        lsActors = new javax.swing.JList<>();
+        jLabel1 = new javax.swing.JLabel();
+        lblAllPeople = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        tfFirstname = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        tfLastname = new javax.swing.JTextField();
+        btnCreatePerson = new javax.swing.JButton();
+        lblErrorLastname = new javax.swing.JLabel();
+        lblErrorFirstname = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        lsAllPeople = new javax.swing.JList<>();
+        btnResetFields = new javax.swing.JButton();
+        btnUpdatePeople = new javax.swing.JButton();
+        lsDirectors = new javax.swing.JList<>();
+        btnDeletePerson = new javax.swing.JButton();
+        btnDeleteDirector = new javax.swing.JButton();
+        btnDeleteActor = new javax.swing.JButton();
+        btnDeleteAllActors = new javax.swing.JButton();
+
         setPreferredSize(new java.awt.Dimension(1060, 700));
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
+
+        lblMovieTitle.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        lblMovieTitle.setText("Movie title");
+
+        jScrollPane1.setViewportView(lsActors);
+
+        jLabel1.setText("Actors");
+
+        lblAllPeople.setText("AllPeople");
+
+        jLabel3.setText("Director");
+
+        jLabel4.setText("Firstname");
+
+        jLabel5.setText("Lastname");
+
+        btnCreatePerson.setText("Create person");
+        btnCreatePerson.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCreatePersonActionPerformed(evt);
+            }
+        });
+
+        lblErrorLastname.setForeground(java.awt.Color.red);
+
+        lblErrorFirstname.setForeground(java.awt.Color.red);
+
+        jScrollPane2.setViewportView(lsAllPeople);
+
+        btnResetFields.setBackground(java.awt.Color.darkGray);
+        btnResetFields.setForeground(java.awt.Color.white);
+        btnResetFields.setText("Reset changes to movie");
+        btnResetFields.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetFieldsActionPerformed(evt);
+            }
+        });
+
+        btnUpdatePeople.setBackground(java.awt.Color.blue);
+        btnUpdatePeople.setForeground(java.awt.Color.white);
+        btnUpdatePeople.setText("Commit changes to movie");
+        btnUpdatePeople.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdatePeopleActionPerformed(evt);
+            }
+        });
+
+        btnDeletePerson.setBackground(java.awt.Color.red);
+        btnDeletePerson.setForeground(java.awt.Color.white);
+        btnDeletePerson.setText("Delete person");
+        btnDeletePerson.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeletePersonActionPerformed(evt);
+            }
+        });
+
+        btnDeleteDirector.setBackground(java.awt.Color.red);
+        btnDeleteDirector.setForeground(java.awt.Color.white);
+        btnDeleteDirector.setText("Delete selceted director");
+        btnDeleteDirector.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteDirectorActionPerformed(evt);
+            }
+        });
+
+        btnDeleteActor.setBackground(java.awt.Color.red);
+        btnDeleteActor.setForeground(java.awt.Color.white);
+        btnDeleteActor.setText("Delete selected actor");
+        btnDeleteActor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActorActionPerformed(evt);
+            }
+        });
+
+        btnDeleteAllActors.setBackground(java.awt.Color.red);
+        btnDeleteAllActors.setForeground(java.awt.Color.white);
+        btnDeleteAllActors.setText("Delete all actors");
+        btnDeleteAllActors.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteAllActorsActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1060, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnDeleteAllActors, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDeleteActor, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblMovieTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(btnDeleteDirector, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                                .addComponent(lsDirectors, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblAllPeople, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(81, 81, 81)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(tfFirstname)
+                                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(tfLastname)
+                                        .addComponent(btnCreatePerson, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(btnDeletePerson, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(28, 28, 28)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblErrorFirstname, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblErrorLastname, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(btnResetFields, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnUpdatePeople, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(199, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 726, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(lblMovieTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblAllPeople, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lsDirectors, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDeleteDirector)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(118, 118, 118)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tfFirstname, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblErrorFirstname, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(9, 9, 9)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tfLastname, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblErrorLastname, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCreatePerson, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDeletePerson, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(btnResetFields, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnUpdatePeople, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnDeleteActor)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnDeleteAllActors)
+                .addContainerGap(96, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnCreatePersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreatePersonActionPerformed
+        if (!formValid()) {
+            return;
+        }
+        try {
+            repository.createPerson(new Person(
+                    tfFirstname.getText().trim(),
+                    tfLastname.getText().trim()
+            ));
+            loadAllPeople();
+        } catch (Exception ex) {
+            Logger.getLogger(EditPersonPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnCreatePersonActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        initSelectedMovie();
+        if (selectedMovie == null) {
+            MessageUtils.showInformationMessage("Info", "Please select movie");
+            return;
+        }
+        init();
+    }//GEN-LAST:event_formComponentShown
+
+    private void btnResetFieldsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetFieldsActionPerformed
+        try {
+            resetActors();
+            reseDirectors();
+            loadActors();
+            loadDirectors();
+        } catch (Exception ex) {
+            Logger.getLogger(EditPersonPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnResetFieldsActionPerformed
+
+    private void btnUpdatePeopleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdatePeopleActionPerformed
+        try {
+            repository.deleteAllMovieRoles(selectedMovie.getId());
+            repository.createAllMovieRoles(selectedMovie.getId(), directors, Person.RoleType.DIRECTOR.toString());
+            repository.createAllMovieRoles(selectedMovie.getId(), actors, Person.RoleType.ACTOR.toString());
+        } catch (Exception ex) {
+            Logger.getLogger(EditPersonPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnUpdatePeopleActionPerformed
+
+    private void btnDeletePersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeletePersonActionPerformed
+        try {
+            repository.deletePerson(lsAllPeople.getSelectedValue().getId());
+            actors.remove(lsAllPeople.getSelectedValue());
+            directors.remove(lsAllPeople.getSelectedValue());
+            loadAllPeople();
+            loadActors();
+            loadDirectors();
+        } catch (Exception ex) {
+            Logger.getLogger(EditPersonPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnDeletePersonActionPerformed
+
+    private void btnDeleteDirectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteDirectorActionPerformed
+        directors.remove(lsDirectors.getSelectedValue());
+        loadDirectors();
+    }//GEN-LAST:event_btnDeleteDirectorActionPerformed
+
+    private void btnDeleteActorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActorActionPerformed
+        actors.remove(lsActors.getSelectedValue());
+        loadActors();
+    }//GEN-LAST:event_btnDeleteActorActionPerformed
+
+    private void btnDeleteAllActorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteAllActorsActionPerformed
+        actors.clear();
+        loadActors();
+    }//GEN-LAST:event_btnDeleteAllActorsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCreatePerson;
+    private javax.swing.JButton btnDeleteActor;
+    private javax.swing.JButton btnDeleteAllActors;
+    private javax.swing.JButton btnDeleteDirector;
+    private javax.swing.JButton btnDeletePerson;
+    private javax.swing.JButton btnResetFields;
+    private javax.swing.JButton btnUpdatePeople;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblAllPeople;
+    private javax.swing.JLabel lblErrorFirstname;
+    private javax.swing.JLabel lblErrorLastname;
+    private javax.swing.JLabel lblMovieTitle;
+    private javax.swing.JList<Person> lsActors;
+    private javax.swing.JList<Person> lsAllPeople;
+    private javax.swing.JList<Person> lsDirectors;
+    private javax.swing.JTextField tfFirstname;
+    private javax.swing.JTextField tfLastname;
     // End of variables declaration//GEN-END:variables
 
-    private void initList() {
-        loadModel();
+    private void init() {
+        try {
+            initValidation();
+            initRepository();
+            initLists();
+            loadActors();
+            loadDirectors();
+            loadAllPeople();
+            initDragNDop();
+            lblMovieTitle.setText(selectedMovie.getTitle());
+        } catch (Exception ex) {
+            Logger.getLogger(EditPersonPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    private void loadModel() {
-        model.clear();
+    private void initRepository() throws Exception {
+        repository = RepositoryFactory.getRepository();
+    }
+    
+    private void initDragNDop() {
+        lsAllPeople.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        lsAllPeople.setDragEnabled(true);
+        lsAllPeople.setTransferHandler(new ExportHandler());
         
+        lsActors.setDropMode(DropMode.ON);
+        lsActors.setTransferHandler(new ImportHandler());
+        
+        lsDirectors.setDropMode(DropMode.ON);
+        lsDirectors.setTransferHandler(new DirectorImportHandler());
+    }
+
+    private void loadDirectors() {
+        directorsModel.clear();
+        directors.forEach(directorsModel::addElement);
+        lsDirectors.setModel(directorsModel);
+    }
+
+    private void loadActors() {
+        actorsModel.clear();
+        actors.forEach(actorsModel::addElement);
+        lsActors.setModel(actorsModel);
+    }
+
+    private void loadAllPeople() throws Exception {
+        allPeopleModel.clear();
+        allPeople = repository.selectAllPeople();
+        allPeople.forEach(allPeopleModel::addElement);
+        lsAllPeople.setModel(allPeopleModel);
+    }
+
+    private void initValidation() {
+        validationFields = Arrays.asList(tfFirstname, tfLastname);
+        errorLabels = Arrays.asList(lblErrorFirstname, lblErrorLastname);
+    }
+
+    private boolean formValid() {
+        boolean ok = true;
+        for (int i = 0; i < validationFields.size(); i++) {
+            ok &= !validationFields.get(i).getText().trim().isEmpty();
+            errorLabels.get(i).setText(validationFields.get(i).getText().trim().isEmpty() ? "X" : "");
+        }
+        return ok;
+    }
+
+    private void initSelectedMovie() {
+        selectedMovie = EditMoviePanel.getMovie();
+    }
+
+    private void resetActors() {
+        actors.clear();
+        actors.addAll(selectedMovie.getActors());
+    }
+    
+    private void reseDirectors() {
+        directors.clear();
+        directors.addAll(selectedMovie.getDirector());        
+    }
+    
+    private void initLists() throws Exception {
+        //if (selectedMovie.getActors() == null) {
+            actors = new ArrayList<>();
+        /*}
+        else
+        {*/
+            actors.addAll(selectedMovie.getActors());
+        //}
+        //if (selectedMovie.getDirector() == null) {
+            directors = new ArrayList<>();
+        /*}
+        else
+        {*/
+            directors.addAll(selectedMovie.getDirector());
+        //}
+        //if (allPeople == null) {        }
+        allPeople = new ArrayList<>();
+        allPeople = repository.selectAllPeople();
+
+    }
+
+    private class ExportHandler extends TransferHandler {
+        @Override
+        public int getSourceActions(JComponent c) {
+            return COPY;
+        }
+
+        @Override
+        public Transferable createTransferable(JComponent c) {
+            return new PersonTransferable(lsAllPeople.getSelectedValue());
+        } 
+    }
+
+    private class ImportHandler extends TransferHandler {
+        @Override
+        public boolean canImport(TransferSupport support) {
+            return support.isDataFlavorSupported(PersonTransferable.PERSON_FLAVOR); 
+        }
+
+        @Override
+        public boolean importData(TransferSupport support) {
+            Transferable transferable = support.getTransferable();
+            try {
+                    Person data = (Person)transferable.getTransferData(PersonTransferable.PERSON_FLAVOR);
+                    if (actors.add(data)) {
+                        loadActors();
+                        return true;
+                    }
+                } catch (UnsupportedFlavorException | IOException ex) {
+                Logger.getLogger(EditPersonPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return false;
+        }
+    }
+    private class DirectorImportHandler extends ImportHandler {
+        @Override
+        public boolean importData(TransferSupport support) {
+            Transferable transferable = support.getTransferable();
+            try {
+                    Person data = (Person)transferable.getTransferData(PersonTransferable.PERSON_FLAVOR);
+                    if (directors.add(data)) {
+                        loadDirectors();
+                        return true;
+                    }
+                } catch (UnsupportedFlavorException | IOException ex) {
+                Logger.getLogger(EditPersonPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return false;
+        }  
     }
 }

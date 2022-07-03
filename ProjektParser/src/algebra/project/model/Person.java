@@ -7,6 +7,7 @@ package algebra.project.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -17,26 +18,59 @@ public class Person {
 
     private static final String NAME_DELIM = " ";
     private static final String DELIM = ", ";
+    private static final String ACTORS_RSS_NAME = "glumci";
 
     private int id;
     private String firstName;
     private String lastName;
     private Optional<RoleType> type;
 
-    public Person() {
-    }
+    public Person() {}
 
     public Person(int id, String firstName, String lastName/*, String typeName*/) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        //this.type = type;
-        //this.setRoleType(typeName);
+    }
+    
+    public Person(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     @Override
     public String toString() {
         return firstName+" "+lastName;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Person other = (Person) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        if (!Objects.equals(this.firstName, other.firstName)) {
+            return false;
+        }
+        if (!Objects.equals(this.lastName, other.lastName)) {
+            return false;
+        }
+        return true;
     }
     
     public int getId() {
@@ -89,6 +123,9 @@ public class Person {
     
     public static List<Person> getPersonList(String data, String roleName) {
         List<Person> people = new ArrayList<>();
+        if (data.isEmpty()) {
+            return people;
+        }
         String[] pplNames = data.split(DELIM);
 
         for (String personName : pplNames) {
@@ -115,7 +152,9 @@ public class Person {
         }
 
         private static Optional<RoleType> getRoleFrom(String roleName) {
-
+            if (roleName.equals(ACTORS_RSS_NAME)) {
+                return Optional.of(ACTOR);
+            }
             for (RoleType value : values()) {
                 if (value.roleName.equals(roleName)) {
                     return Optional.of(value);
