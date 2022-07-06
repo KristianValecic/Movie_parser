@@ -52,10 +52,10 @@ public class LoginPanel extends javax.swing.JPanel {
         tfUsername = new javax.swing.JTextField();
         lblErrorUsername = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        tfPassword = new javax.swing.JTextField();
         lblErrorPassword = new javax.swing.JLabel();
         btnLogin = new javax.swing.JButton();
         lblErrorLogin = new javax.swing.JLabel();
+        tfPassword = new javax.swing.JPasswordField();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -87,11 +87,6 @@ public class LoginPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(119, 119, 119)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(tfPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblErrorPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -99,7 +94,13 @@ public class LoginPanel extends javax.swing.JPanel {
                             .addComponent(lblErrorLogin, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(tfUsername, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblErrorUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(lblErrorUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(tfPassword)
+                            .addComponent(btnLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblErrorPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(123, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -117,8 +118,8 @@ public class LoginPanel extends javax.swing.JPanel {
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblErrorPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tfPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblErrorPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                    .addComponent(tfPassword))
                 .addGap(27, 27, 27)
                 .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(90, Short.MAX_VALUE))
@@ -130,7 +131,19 @@ public class LoginPanel extends javax.swing.JPanel {
             return;
         }
         if (TryLoginUser()) {
-            if (user.getRole().equals(UserRoleType.ADMIN.toString())) {         
+            new Thread(() -> {
+                LoginUser();
+            }).start();
+        }
+        else  
+        {
+            lblErrorLogin.setText("Wrong username or password");
+        }
+    }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void LoginUser() {
+        java.awt.EventQueue.invokeLater(() -> {
+           if (user.getRole().equals(UserRoleType.ADMIN.toString())) {
                 JFrame adminForm = new AdminForm();
                 adminForm.setVisible(true);
                 SwingUtilities.windowForComponent(this).dispose();
@@ -140,13 +153,9 @@ public class LoginPanel extends javax.swing.JPanel {
                 userForm.setVisible(true);
                 this.setVisible(false);
                 SwingUtilities.windowForComponent(this).dispose();
-            }
-        }
-        else  
-        {
-            lblErrorLogin.setText("Wrong username or password");
-        }
-    }//GEN-LAST:event_btnLoginActionPerformed
+            } 
+        });
+    }
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         init();
@@ -160,7 +169,7 @@ public class LoginPanel extends javax.swing.JPanel {
     private javax.swing.JLabel lblErrorLogin;
     private javax.swing.JLabel lblErrorPassword;
     private javax.swing.JLabel lblErrorUsername;
-    private javax.swing.JTextField tfPassword;
+    private javax.swing.JPasswordField tfPassword;
     private javax.swing.JTextField tfUsername;
     // End of variables declaration//GEN-END:variables
 
@@ -197,11 +206,22 @@ public class LoginPanel extends javax.swing.JPanel {
 
     private boolean TryLoginUser() {
         try {
-            user = repository.checkIfUserExists(tfUsername.getText().trim(), tfPassword.getText().trim());
+            
+            user = repository.checkIfUserExists(tfUsername.getText().trim(), charToString(tfPassword.getPassword()));
         } catch (Exception ex) {
             Logger.getLogger(LoginPanel.class.getName()).log(Level.SEVERE, null, ex); 
         }
         
         return user != null;   
+    }
+
+    private String charToString(char[] password) {
+        StringBuilder sb = new StringBuilder();
+ 
+        for (int i = 0; i < password.length; i++) {
+            sb.append(password[i]);
+        }
+ 
+        return sb.toString();
     }
 }

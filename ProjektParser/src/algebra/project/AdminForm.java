@@ -8,6 +8,14 @@ package algebra.project;
 //import algebra.project.view.GetMoviesPanel;
 
 import algebra.project.view.GetMoviesPanel;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 
 /**
@@ -22,6 +30,7 @@ public class AdminForm extends javax.swing.JFrame {
     public AdminForm() {
         initComponents();
         configurePanels();
+        handleLooknFeel();
     }
 
     /**
@@ -34,8 +43,36 @@ public class AdminForm extends javax.swing.JFrame {
     private void initComponents() {
 
         tpContent = new javax.swing.JTabbedPane();
+        menuBar = new javax.swing.JMenuBar();
+        menuFile = new javax.swing.JMenu();
+        miExit = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        menuLF = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        menuFile.setMnemonic('F');
+        menuFile.setText("File");
+
+        miExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        miExit.setText("Exit");
+        miExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miExitActionPerformed(evt);
+            }
+        });
+        menuFile.add(miExit);
+
+        menuBar.add(menuFile);
+
+        jMenu2.setText("View");
+
+        menuLF.setText("Look 'n' Feel");
+        jMenu2.add(menuLF);
+
+        menuBar.add(jMenu2);
+
+        setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -45,12 +82,16 @@ public class AdminForm extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tpContent, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
+            .addComponent(tpContent, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void miExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExitActionPerformed
+        dispose();
+    }//GEN-LAST:event_miExitActionPerformed
 
     /**
      * @param args the command line arguments
@@ -88,6 +129,11 @@ public class AdminForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenu menuFile;
+    private javax.swing.JMenu menuLF;
+    private javax.swing.JMenuItem miExit;
     private javax.swing.JTabbedPane tpContent;
     // End of variables declaration//GEN-END:variables
 
@@ -96,5 +142,22 @@ public class AdminForm extends javax.swing.JFrame {
     }
     
     private static final String GET_MOVIES = "Get movies";
-    
+
+    private void handleLooknFeel() {
+        ButtonGroup bg = new ButtonGroup();
+        Arrays.asList(UIManager.getInstalledLookAndFeels()).forEach(info ->{
+            JRadioButtonMenuItem mi = new JRadioButtonMenuItem(info.getName());
+            menuLF.add(mi);
+            bg.add(mi);
+            mi.setSelected(info.getName().equals("Nimbus"));
+            mi.addActionListener(e -> {
+                try {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    SwingUtilities.updateComponentTreeUI(AdminForm.this);
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                    Logger.getLogger(AdminForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+        });
+    }
 }

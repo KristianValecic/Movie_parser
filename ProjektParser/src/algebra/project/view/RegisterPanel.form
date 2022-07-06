@@ -20,23 +20,28 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="125" max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="btnRegister" max="32767" attributes="0"/>
-                  <Component id="lblConfirmPassword" alignment="0" min="-2" pref="113" max="-2" attributes="0"/>
-                  <Component id="jLabel2" alignment="0" min="-2" pref="113" max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" pref="113" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="btnRegister" pref="179" max="32767" attributes="0"/>
                   <Component id="tfUsername" alignment="0" max="32767" attributes="0"/>
-                  <Component id="tfPassword" alignment="0" max="32767" attributes="0"/>
-                  <Component id="tfConfirmPassword" alignment="0" min="-2" pref="179" max="-2" attributes="0"/>
+                  <Component id="tfPassword" max="32767" attributes="0"/>
+                  <Component id="tfConfirmPassword" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="lblConfirmPassword" alignment="0" min="-2" pref="113" max="-2" attributes="0"/>
+                          <Component id="jLabel2" alignment="0" min="-2" pref="113" max="-2" attributes="0"/>
+                          <Component id="jLabel1" min="-2" pref="113" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="lblErrorPasswordMatch" min="-2" pref="159" max="-2" attributes="0"/>
-                  <Component id="lblErrorPassword" alignment="0" min="-2" pref="171" max="-2" attributes="0"/>
-                  <Component id="lblErrorUsername" min="-2" pref="171" max="-2" attributes="0"/>
+                  <Component id="lblErrorUsername" min="-2" pref="138" max="-2" attributes="0"/>
+                  <Component id="lblErrorPasswordMatch" alignment="0" min="-2" pref="138" max="-2" attributes="0"/>
+                  <Component id="lblErrorPassword" alignment="0" min="-2" pref="125" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -53,16 +58,16 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel2" min="-2" pref="35" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="tfPassword" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                  <Component id="lblErrorPassword" alignment="3" min="-2" pref="35" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="lblErrorPassword" pref="35" max="32767" attributes="0"/>
+                  <Component id="tfPassword" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="lblConfirmPassword" min="-2" pref="35" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="tfConfirmPassword" min="-2" pref="33" max="-2" attributes="0"/>
-                  <Component id="lblErrorPasswordMatch" min="-2" pref="35" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="lblErrorPasswordMatch" pref="35" max="32767" attributes="0"/>
+                  <Component id="tfConfirmPassword" max="32767" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="btnRegister" min="-2" pref="37" max="-2" attributes="0"/>
@@ -87,16 +92,9 @@
         <Property name="text" type="java.lang.String" value="Password:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="tfPassword">
-    </Component>
     <Component class="javax.swing.JLabel" name="lblConfirmPassword">
       <Properties>
         <Property name="text" type="java.lang.String" value="Confirm password:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="tfConfirmPassword">
-      <Properties>
-        <Property name="name" type="java.lang.String" value="ConfirmPassword" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnRegister">
@@ -126,6 +124,13 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="0" green="0" id="red" palette="1" red="ff" type="palette"/>
         </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="tfPassword">
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="tfConfirmPassword">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="ConfirmPassword" noResource="true"/>
       </Properties>
     </Component>
   </SubComponents>

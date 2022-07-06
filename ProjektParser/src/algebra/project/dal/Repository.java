@@ -53,4 +53,13 @@ public interface Repository {
     void CreateUser(User user)throws Exception;
 
     public void deleteAllMovieRoles(int id) throws Exception;
+
+    public List<String> selectAllGenres() throws Exception;
+    public void deleteMovieGenre(String genre) throws Exception;
+
+    public int createGenre(String genre) throws Exception;
+
+    public void deleteAllMovieGenres(int movieId) throws Exception;
+
+    public void createAllMovieGenres(int movieId, List<String> genres) throws Exception;
 }

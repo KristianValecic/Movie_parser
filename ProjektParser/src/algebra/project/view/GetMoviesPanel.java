@@ -82,7 +82,7 @@ public class GetMoviesPanel extends javax.swing.JPanel {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnGetMovies, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDeleteAll, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(585, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -93,36 +93,41 @@ public class GetMoviesPanel extends javax.swing.JPanel {
                 .addComponent(btnGetMovies, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnDeleteAll, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(291, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     private void btnDeleteAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteAllActionPerformed
         if (MessageUtils.showConfirmDialog("Are you sure?", "Are you sure?") == JOptionPane.YES_OPTION) {
-            try {
-                for (Movie movie : repository.selectAllMovies()) {
-                    if (movie.getPosterPath() != null) {
-                        Files.deleteIfExists(Paths.get(movie.getPosterPath()));
+            new Thread(() -> {
+                try {
+                    for (Movie movie : repository.selectAllMovies()) {
+                        if (movie.getPosterPath() != null) {
+                            Files.deleteIfExists(Paths.get(movie.getPosterPath()));
+                        }
                     }
+                    repository.deleteAll();
+                    loadModel();
+                } catch (Exception ex) {
+                    Logger.getLogger(GetMoviesPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                repository.deleteAll();
-                loadModel();
-            } catch (Exception ex) {
-                Logger.getLogger(GetMoviesPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }).start();
         }
     }//GEN-LAST:event_btnDeleteAllActionPerformed
 
     private void btnGetMoviesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetMoviesActionPerformed
-        try {
-            List<Movie> movies = MovieParser.parse();
-            repository.createAllMovies(movies);
-            loadModel();
-        } catch (Exception ex ) {
-            Logger.getLogger(GetMoviesPanel.class.getName()).log(Level.SEVERE, null, ex);
-            MessageUtils.showErrorMessage("Error", "Unable to get movies");
-            System.exit(1);
-        }
+        new Thread(() -> {
+            try {
+                List<Movie> movies = MovieParser.parse();
+                repository.createAllMovies(movies);
+                loadModel();            
+            } catch (Exception ex ) {
+                Logger.getLogger(GetMoviesPanel.class.getName()).log(Level.SEVERE, null, ex);
+                MessageUtils.showErrorMessage("Error", "Unable to get movies");
+                System.exit(1);
+            }
+        }).start();
+        
     }//GEN-LAST:event_btnGetMoviesActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -143,9 +148,15 @@ public class GetMoviesPanel extends javax.swing.JPanel {
     }
 
     private void loadModel() throws Exception {
-        model.clear();
-        List<Movie> movies = repository.selectAllMovies();
-        movies.forEach(model::addElement);
-        listMovies.setModel(model);
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                model.clear();
+                List<Movie> movies = repository.selectAllMovies();
+                movies.forEach(model::addElement); 
+                listMovies.setModel(model);
+            } catch (Exception ex) {
+                Logger.getLogger(GetMoviesPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 }

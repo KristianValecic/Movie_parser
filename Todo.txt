@@ -1,13 +1,12 @@
-pozadinska dretva za getanja moviea (3. video na oko 1:16)
-forma za dodavanje zanrova
+iztestiraj sa dropanjem baze 
+
 dodati negdje jmenu
+i jaxb download
 
 heshiraj password
 mozda napravci jaxb save u dat
 
 rijesi format 1.2.2022 (parsiraj s delim tockom i onda fillaj u datTimeFormat)
-
-Dodoaj getMovie u pozadinsku dretvu
 
 2012-12-12T11:23:33
 
@@ -16,12 +15,3 @@ https://liveracunarstvo.sharepoint.com/sites/ProgramiranjeuJavi12021.2022/Shared
 
 Aplikacija:
 na enter napravit paljenje gumba login
-
-Admin forma:
-mozda staviti brisanje slika u pozadinsku dretvu
-
-User forma:
-edit genres
-
-AKO IMAS VREMENA
-napravi formValid u Utilsu

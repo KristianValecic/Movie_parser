@@ -8,9 +8,11 @@ package algebra.project.view;
 import algebra.project.dal.Repository;
 import algebra.project.dal.RepositoryFactory;
 import algebra.project.model.Movie;
+import algebra.project.model.MovieArchive;
 import algebra.project.model.Person;
 import algebra.project.utils.FileUtils;
 import algebra.project.utils.IconUtils;
+import algebra.project.utils.JAXBUtils;
 import algebra.project.utils.MessageUtils;
 import algebra.project.view.model.MovieTableModel;
 import java.io.File;
@@ -18,6 +20,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.JTextComponent;
+import javax.xml.bind.JAXBException;
 import org.omg.CORBA.Environment;
 
 /**
@@ -40,23 +45,32 @@ public class EditMoviePanel extends javax.swing.JPanel {
 
     private List<JTextComponent> validationFields;
     private List<JLabel> errorLabels;
+    private static List<Movie> allMovies = new ArrayList<>();
     
     private DefaultListModel<Person> actorsModel = new DefaultListModel<>();
     private DefaultListModel<Person> directorsModel = new DefaultListModel<>();
     private DefaultListModel<String> genresModel = new DefaultListModel<>();
     
     private Repository repository;
-    
     private MovieTableModel model;
-    
     private static Movie selectedMovie;
     
     private static final int HEIGHT = 25;
     private static final String DIR = "assets";
+    private static final String FILE = "movieArchive.xml";
     
     public static Movie getMovie(){
         return selectedMovie;
     }
+    
+    
+    public static List<Movie> getAllMovies(){
+        return allMovies;
+    }  
+    
+    public static String getFile(){
+        return FILE;
+    }  
     
     /**
      * Creates new form EditMoviePanel
@@ -110,6 +124,7 @@ public class EditMoviePanel extends javax.swing.JPanel {
         lsDirectors = new javax.swing.JList<>();
         lsActors = new javax.swing.JList<>();
         lsGenre = new javax.swing.JList<>();
+        btnSaveAllMovies = new javax.swing.JButton();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -227,6 +242,15 @@ public class EditMoviePanel extends javax.swing.JPanel {
 
         jScrollPane3.setViewportView(lsDirectors);
 
+        btnSaveAllMovies.setBackground(java.awt.Color.blue);
+        btnSaveAllMovies.setForeground(java.awt.Color.white);
+        btnSaveAllMovies.setText("Save all movies");
+        btnSaveAllMovies.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveAllMoviesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -234,7 +258,6 @@ public class EditMoviePanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 953, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -310,7 +333,10 @@ public class EditMoviePanel extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(tfPosterPath, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblErrorPosterPath, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(lblErrorPosterPath, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(btnSaveAllMovies, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 953, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(164, 273, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -388,8 +414,11 @@ public class EditMoviePanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(lsActors, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnDelete)
-                        .addGap(10, 10, 10)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnDelete)
+                                .addGap(10, 10, 10))
+                            .addComponent(btnSaveAllMovies, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(79, 79, 79))
@@ -397,7 +426,10 @@ public class EditMoviePanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        init();
+        new Thread(() -> {
+            init();
+        }).start();
+       
     }//GEN-LAST:event_formComponentShown
 
     private void btnChangePosterPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePosterPathActionPerformed
@@ -509,12 +541,21 @@ public class EditMoviePanel extends javax.swing.JPanel {
     private void tbMoviesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMoviesMouseClicked
         ShowMovie();
     }//GEN-LAST:event_tbMoviesMouseClicked
+            
+    private void btnSaveAllMoviesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveAllMoviesActionPerformed
+        try {
+            JAXBUtils.save(new MovieArchive(allMovies), FILE);
+        } catch (JAXBException ex) {
+            Logger.getLogger(EditMoviePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnSaveAllMoviesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChangePosterPath;
     private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnSaveAllMovies;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -551,15 +592,18 @@ public class EditMoviePanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void init() {
-        try {
-            initValidation();
-            initRepository();
-            initTable();
-        } catch (Exception ex) {
-            Logger.getLogger(EditMoviePanel.class.getName()).log(Level.SEVERE, null, ex);
-            MessageUtils.showErrorMessage("Unrecoverable", "Exiting...");
-            System.exit(1);
-        }
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                initValidation();
+                initRepository();
+                refreshForm();
+                initTable();
+            } catch (Exception ex) {
+                Logger.getLogger(EditMoviePanel.class.getName()).log(Level.SEVERE, null, ex);
+                MessageUtils.showErrorMessage("Unrecoverable", "Exiting...");
+                System.exit(1);
+            }
+        });
     }
 
     private void initValidation() {
@@ -572,11 +616,12 @@ public class EditMoviePanel extends javax.swing.JPanel {
     }
 
     private void initTable() throws Exception {
-        tbMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tbMovies.setAutoCreateRowSorter(true);
-        tbMovies.setRowHeight(HEIGHT);
-        model = new MovieTableModel(repository.selectAllMovies());
-        tbMovies.setModel(model);
+            tbMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            tbMovies.setAutoCreateRowSorter(true);
+            tbMovies.setRowHeight(HEIGHT);
+            allMovies.addAll(repository.selectAllMovies());
+            model = new MovieTableModel(allMovies);
+            tbMovies.setModel(model);
     }
 
     private void setIcon(JLabel label, File file) {
@@ -642,7 +687,6 @@ public class EditMoviePanel extends javax.swing.JPanel {
             int selectedRow = tbMovies.getSelectedRow();
             int rowIndex = tbMovies.convertRowIndexToModel(selectedRow);
             int selectedMovieId = (int) model.getValueAt(rowIndex, 0);
-            
         try { 
             Optional<Movie> optMovie = repository.selectMovie(selectedMovieId);
             if (optMovie.isPresent()) {
@@ -701,5 +745,13 @@ public class EditMoviePanel extends javax.swing.JPanel {
         genresModel.clear();
         movie.getGenre().forEach(genresModel::addElement);
         lsGenre.setModel(genresModel);
+    }
+
+    private void refreshForm() throws Exception {
+        if (selectedMovie != null) {   
+            Optional<Movie> optMovie = repository.selectMovie(selectedMovie.getId());
+            selectedMovie = optMovie.get();
+            fillForm(selectedMovie);
+        }
     }
 }

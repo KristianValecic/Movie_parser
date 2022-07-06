@@ -54,6 +54,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     private static final String ROLE_NAME = "RoleName";
 
     //MovieGenre
+    private static final String ID_GENRE = "IDGenre";
     private static final String GENRE = "Genre";
     private static final String GENRE_NAME = "GenreName";
     
@@ -83,6 +84,10 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
 
     private static final String CREATE_MOVIE_GENRE = "{ CALL createMovieGenre (?,?) }";
     private static final String SELECT_MOVIE_GENRE = "{ CALL selectMovieGenre (?) }";
+    private static final String DELETE_ALL_MOVIE_GENRES = "{ CALL deleteAllMovieGenres (?) }";
+    private static final String CREATE_GENRE = "{ CALL createGenre (?,?) }";
+    private static final String DELETE_GENRE = "{ CALL deleteGenre (?) }";
+    private static final String SELECT_ALL_GENRES = "{ CALL selectAllGenres () }";
 
     private static final String USER_EXISTS = "{ CALL checkIfUserExists (?,?) }";
     private static final String USERNAME_EXISTS = "{ CALL checkIfUsernameExists (?) }";
@@ -528,6 +533,70 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
             stmt.setInt("@" + MOVIE_ID, id);
 
             stmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public List<String> selectAllGenres() throws Exception {
+        List<String> genres = new ArrayList<>();
+        DataSource dataSource = DataSourceSingleton.getInstance();
+        try (Connection con = dataSource.getConnection();
+                CallableStatement stmt = con.prepareCall(SELECT_ALL_GENRES);
+                ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                genres.add(rs.getString(GENRE_NAME));
+            }
+        }
+
+        return genres;
+    }
+
+    @Override
+    public void deleteMovieGenre(String genre) throws SQLException {
+        DataSource dataSource = DataSourceSingleton.getInstance();
+        try (Connection con = dataSource.getConnection();
+                CallableStatement stmt = con.prepareCall(DELETE_GENRE)) {
+
+            stmt.setString("@" + GENRE, genre);
+
+            stmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public int createGenre(String genre) throws Exception {
+        DataSource dataSource = DataSourceSingleton.getInstance();
+        try (Connection con = dataSource.getConnection();
+            CallableStatement stmt = con.prepareCall(CREATE_GENRE)) {
+
+            stmt.setString("@" + GENRE, genre);
+
+            stmt.registerOutParameter("@" + ID_GENRE, Types.INTEGER);
+
+            stmt.executeUpdate();
+            
+            return stmt.getInt("@" + ID_GENRE);
+        }
+    }
+
+    @Override
+    public void deleteAllMovieGenres(int movieId) throws Exception {
+        DataSource dataSource = DataSourceSingleton.getInstance();
+        try (Connection con = dataSource.getConnection();
+            CallableStatement stmt = con.prepareCall(DELETE_ALL_MOVIE_GENRES)) {
+
+            stmt.setInt("@" + MOVIE_ID, movieId);
+            stmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public void createAllMovieGenres(int movieId, List<String> genres) throws Exception {
+        if(genres == null){
+            return;
+        }
+        for (String genre : genres) {
+            createMovieGenre(movieId, genre);
         }
     }
 }

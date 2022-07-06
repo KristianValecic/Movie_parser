@@ -1,6 +1,7 @@
 create database MovieJAVA
 
 use MovieJAVA
+go 
 
 create table Movie (
 	IDMovie int primary key identity(1,1),
@@ -212,9 +213,9 @@ end
 go
 
 create proc deletePerson
-	@IDPerson INT 
+	@IDPerson INT
 as
-begin 
+begin
 	delete from MovieRole
 	where PersonID = @IDPerson
 
@@ -334,6 +335,45 @@ begin
 end
 go
 
+create proc deleteGenre
+	@Genre nvarchar(250)
+as
+begin 
+	declare @genreid int
+	select @genreid = idgenre from Genre 
+	where GenreName = @genre
+
+	delete from MovieGenre
+	where GenreID = @genreid
+
+	delete from genre 
+	where IDGenre = @genreid
+end
+go
+
+create proc createGenre
+	@Genre nvarchar(250),
+	@IDGenre int output
+as
+begin
+if	not exists (select * from Genre where GenreName = @Genre)
+	begin
+		insert into Genre(GenreName)
+		values (@Genre)
+		SET @IDGenre = SCOPE_IDENTITY()
+	end
+end
+go
+
+create proc deleteAllMovieGenres
+	@MovieID int 
+as
+begin
+	delete from MovieGenre
+	where MovieID = @MovieID
+end
+go
+
 create proc deleteAll
 	@MovieID int
 as
@@ -395,3 +435,12 @@ begin
 	SET @IDAppUser = SCOPE_IDENTITY()
 end
 go
+
+create proc selectAllGenres
+as
+begin 
+	select *
+	from Genre
+end
+go
+

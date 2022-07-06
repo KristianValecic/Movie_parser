@@ -10,11 +10,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
  * @author Kristian
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Movie {
 
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -23,28 +30,30 @@ public class Movie {
     
     private int id;
     private String title;
+    @XmlJavaTypeAdapter(PublishedDateAdapter.class)
     private LocalDateTime pubDate;
     private String description;
+    @XmlElement(name = "orignaziv")
     private String origName;
+    @XmlElementWrapper
+    @XmlElement(name = "redatelj")
     private List<Person> director;
+    @XmlElementWrapper
+    @XmlElement(name = "glumac")
     private List<Person> actors;
+    @XmlElement(name = "trajanje")
     private int duration; // setter prima string i pretvara u int
+    @XmlElementWrapper
+    @XmlElement(name = "zanr")
     private List<String> genre;
+    @XmlElement(name = "plakat")
     private String posterPath;
-    private String startDate; //mozda makni, dateTime
+    @XmlElement(name = "pocetak")
+    private String startDate; 
 
     public Movie() {
     }
 
-    /*   public Movie(String title, LocalDateTime pubDate, String description, String origName, int duration, String posterPath, String startDate) {
-        this.title = title;
-        this.pubDate = pubDate;
-        this.description = description;
-        this.origName = origName;
-        this.duration = duration;
-        this.posterPath = posterPath;
-        this.startDate = startDate;
-    }*/
     public Movie(int id, String title, LocalDateTime pubDate, String description, String origName, List<Person> director, List<Person> actors, int duration, List<String> genre, String posterPath, String startDate) {
         this(title, pubDate, description, origName, director, actors, duration, genre, posterPath, startDate);
         this.id = id;

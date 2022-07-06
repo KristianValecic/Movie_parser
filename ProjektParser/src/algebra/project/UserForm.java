@@ -5,8 +5,20 @@
  */
 package algebra.project;
 
+import algebra.project.model.MovieArchive;
+import algebra.project.utils.JAXBUtils;
+import algebra.project.view.EditGenrePanel;
 import algebra.project.view.EditMoviePanel;
 import algebra.project.view.EditPersonPanel;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.xml.bind.JAXBException;
 
 /**
  *
@@ -20,6 +32,7 @@ public class UserForm extends javax.swing.JFrame {
     public UserForm() {
         initComponents(); 
         configurePanels();
+        handleLooknFeel();
     }
 
     /**
@@ -32,8 +45,45 @@ public class UserForm extends javax.swing.JFrame {
     private void initComponents() {
 
         tpContent = new javax.swing.JTabbedPane();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        menuLF = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jMenu1.setText("File");
+        jMenu1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu1ActionPerformed(evt);
+            }
+        });
+
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setText("Save all movies as archive");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem2.setText("Exit");
+        jMenu1.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("View");
+
+        menuLF.setText("Look 'n' Feel");
+        jMenu2.add(menuLF);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -43,12 +93,24 @@ public class UserForm extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tpContent, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE)
+            .addComponent(tpContent, javax.swing.GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
+        dispose();
+    }//GEN-LAST:event_jMenu1ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        try {
+            JAXBUtils.save(new MovieArchive(EditMoviePanel.getAllMovies()), EditMoviePanel.getFile());
+        } catch (JAXBException ex) {
+            Logger.getLogger(EditMoviePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -86,13 +148,39 @@ public class UserForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenu menuLF;
     private javax.swing.JTabbedPane tpContent;
     // End of variables declaration//GEN-END:variables
 
      private void configurePanels() {
         tpContent.add(EDIT_MOVIES, new EditMoviePanel());
         tpContent.add(EDIT_MOVIE_ROLES, new EditPersonPanel());
+        tpContent.add(EDIT_MOVIE_GENRE, new EditGenrePanel());
     }
     private static final String EDIT_MOVIES = "Edit movies";
     private static final String EDIT_MOVIE_ROLES = "Edit movie roles";
+    private static final String EDIT_MOVIE_GENRE = "Edit movie genre";
+
+    private void handleLooknFeel() {
+        ButtonGroup bg = new ButtonGroup();
+        Arrays.asList(UIManager.getInstalledLookAndFeels()).forEach(info ->{
+            JRadioButtonMenuItem mi = new JRadioButtonMenuItem(info.getName());
+            menuLF.add(mi);
+            bg.add(mi);
+            mi.setSelected(info.getName().equals("Nimbus"));
+            mi.addActionListener(e -> {
+                try {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    SwingUtilities.updateComponentTreeUI(UserForm.this);
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                    Logger.getLogger(AdminForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+        });
+    }
 }
