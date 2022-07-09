@@ -5,7 +5,6 @@
  */
 package algebra.project.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 

@@ -48,9 +48,9 @@ public interface Repository {
 
     User checkIfUserExists(String username, String password) throws Exception;
 
-    boolean CheckIfUsernameExists(String username) throws Exception;
+    boolean checkIfUsernameExists(String username) throws Exception;
 
-    void CreateUser(User user)throws Exception;
+    void createUser(User user)throws Exception;
 
     public void deleteAllMovieRoles(int id) throws Exception;
 

@@ -12,9 +12,9 @@ import algebra.project.dal.RepositoryFactory;
 import algebra.project.model.User;
 import algebra.project.model.User.UserRoleType;
 import algebra.project.utils.MessageUtils;
+import algebra.project.utils.StringUtils;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -207,7 +207,7 @@ public class LoginPanel extends javax.swing.JPanel {
     private boolean TryLoginUser() {
         try {
             
-            user = repository.checkIfUserExists(tfUsername.getText().trim(), charToString(tfPassword.getPassword()));
+            user = repository.checkIfUserExists(tfUsername.getText().trim(), StringUtils.charToString(tfPassword.getPassword()));
         } catch (Exception ex) {
             Logger.getLogger(LoginPanel.class.getName()).log(Level.SEVERE, null, ex); 
         }
@@ -215,13 +215,4 @@ public class LoginPanel extends javax.swing.JPanel {
         return user != null;   
     }
 
-    private String charToString(char[] password) {
-        StringBuilder sb = new StringBuilder();
- 
-        for (int i = 0; i < password.length; i++) {
-            sb.append(password[i]);
-        }
- 
-        return sb.toString();
-    }
 }

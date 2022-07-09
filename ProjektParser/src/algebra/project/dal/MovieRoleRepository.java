@@ -7,7 +7,6 @@ package algebra.project.dal;
 
 import algebra.project.model.Person;
 import java.util.List;
-import java.util.Optional;
 
 /**
  *

@@ -7,7 +7,6 @@ package algebra.project.view;
 
 import algebra.project.dal.Repository;
 import algebra.project.dal.RepositoryFactory;
-import algebra.project.dal.parsers.rss.MovieParser;
 import algebra.project.model.Movie;
 import algebra.project.model.Person;
 import algebra.project.model.PersonTransferable;
@@ -15,7 +14,6 @@ import algebra.project.utils.MessageUtils;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +26,6 @@ import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.text.JTextComponent;
-import javax.xml.stream.XMLStreamException;
 
 /**
  *

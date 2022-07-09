@@ -17,7 +17,6 @@ import java.net.HttpURLConnection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,7 +30,6 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 /**
  *
@@ -40,10 +38,8 @@ import org.jsoup.nodes.Element;
 public class MovieParser {
 
     private static final String RSS_URL = "https://www.blitz-cinestar.hr/rss.aspx?najava=1";
-    //private static final String ATT_URL = "url";
     private static final String DIR = "assets";
     private static final String EXT = ".jpg";
-    //private static final String DELIM = ", ";
 
     public static List<Movie> parse() throws IOException, XMLStreamException {
         List<Movie> movies = new ArrayList<>();

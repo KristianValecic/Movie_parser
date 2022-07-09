@@ -5,8 +5,6 @@
  */
 package algebra.project;
 
-//import algebra.project.view.EditMoviePanel;
-//import algebra.project.view.GetMoviesPanel;
 import algebra.project.view.LoginPanel;
 import algebra.project.view.RegisterPanel;
 
@@ -96,11 +94,7 @@ public class MainForm extends javax.swing.JFrame {
     private void configurePanels() {
         tpContent.add(LOGIN, new LoginPanel());
         tpContent.add(REGISTER, new RegisterPanel());
-        //tpContent.add(GET_MOVIES, new GetMoviesPanel());
-        //tpContent.add(EDIT_MOVIES, new EditMoviePanel());
     }
     private static final String LOGIN = "Login";
     private static final String REGISTER = "Rgister";
-    //private static final String GET_MOVIES = "Get movies";
-    //private static final String EDIT_MOVIES = "Edit movies";
 }

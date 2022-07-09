@@ -5,8 +5,6 @@
  */
 package algebra.project;
 
-//import algebra.project.view.GetMoviesPanel;
-
 import algebra.project.view.GetMoviesPanel;
 import java.util.Arrays;
 import java.util.logging.Level;

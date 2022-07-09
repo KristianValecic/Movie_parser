@@ -12,36 +12,34 @@ package algebra.project.model;
 public class User {
     
     private int id;
-    private String Username;
-    private String Password;
-    private String Role;
+    private String username;
+    private String password;
+    private String role;
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
     public String getRole() {
-        return Role;
+        return role;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
     
-    public User(int id, String Username, String Password, String Role) {
+    public User(int id, String username, String password, String role) {
         this.id = id;
-        this.Username = Username;
-        this.Password = Password;
-        this.Role = Role;
+        this.username = username;
+        this.password = password;
+        this.role = role;
     }
 
-    public User(String Username, String Password, String Role) {
-        this.Username = Username;
-        this.Password = Password;
-        this.Role = Role;
+    public User(String username, String password, String role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
     }
-    
-    
     
      public enum UserRoleType {
         ADMIN("Admin"),
@@ -57,16 +55,5 @@ public class User {
         public String toString() {
             return roleName;
         }
-
-        /*private static Optional<UserRoleType> getRoleFrom(String roleName) {
-
-            for (UserRoleType value : values()) {
-                if (value.roleName.equals(roleName)) {
-                    return Optional.of(value);
-                }
-            }
-
-            return Optional.empty();
-        }*/
     }
 }

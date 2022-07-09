@@ -10,6 +10,7 @@ import algebra.project.dal.Repository;
 import algebra.project.dal.RepositoryFactory;
 import algebra.project.model.User;
 import algebra.project.utils.MessageUtils;
+import algebra.project.utils.StringUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -141,9 +142,9 @@ public class RegisterPanel extends javax.swing.JPanel {
             return;
         }
         try {
-            repository.CreateUser(new User(
+            repository.createUser(new User(
                 tfUsername.getText().trim(),
-                tfPassword.getText().trim(),
+                StringUtils.charToString(tfPassword.getPassword()).trim(),
                 User.UserRoleType.USER.toString()
             ));
             JFrame userForm = new UserForm();
@@ -200,7 +201,7 @@ public class RegisterPanel extends javax.swing.JPanel {
             errorLabels.get(i).setText(validationFields.get(i).getText().trim().isEmpty() ? "X" : "");
             if ("Username".equals(validationFields.get(i).getName())) {
                 try {
-                    if (repository.CheckIfUsernameExists(validationFields.get(i).getText().trim())) {
+                    if (repository.checkIfUsernameExists(validationFields.get(i).getText().trim())) {
                         errorLabels.get(i).setText("Username already exists");
                         ok = false;  
                     }   

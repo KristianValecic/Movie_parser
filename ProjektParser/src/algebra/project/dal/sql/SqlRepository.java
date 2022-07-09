@@ -5,16 +5,11 @@
  */
 package algebra.project.dal.sql;
 
-import algebra.project.dal.MovieGenreRepository;
-import algebra.project.dal.MovieRepository;
-import algebra.project.dal.MovieRoleRepository;
-import algebra.project.dal.PersonRepository;
 import algebra.project.dal.Repository;
 import algebra.project.model.Movie;
 import algebra.project.model.Person;
 import algebra.project.model.Person.RoleType;
 import algebra.project.model.User;
-import algebra.project.utils.MessageUtils;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -25,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import javax.swing.JOptionPane;
 
 public class SqlRepository implements Repository { //MovieRepository, PersonRepository, MovieRoleRepository, MovieGenreRepository {
 
@@ -490,7 +484,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     }
 
     @Override
-    public boolean CheckIfUsernameExists(String username) throws Exception {
+    public boolean checkIfUsernameExists(String username) throws Exception {
         DataSource dataSource = DataSourceSingleton.getInstance();
         try (Connection con = dataSource.getConnection();
                 CallableStatement stmt = con.prepareCall(USERNAME_EXISTS)) {
@@ -509,7 +503,7 @@ public class SqlRepository implements Repository { //MovieRepository, PersonRepo
     }
 
     @Override
-    public void CreateUser(User user) throws Exception {
+    public void createUser(User user) throws Exception {
         DataSource dataSource = DataSourceSingleton.getInstance();
         try (Connection con = dataSource.getConnection();
                 CallableStatement stmt = con.prepareCall(CREATE_USER)) {

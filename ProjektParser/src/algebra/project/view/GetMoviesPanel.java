@@ -10,7 +10,6 @@ import algebra.project.dal.RepositoryFactory;
 import algebra.project.dal.parsers.rss.MovieParser;
 import algebra.project.model.Movie;
 import algebra.project.utils.MessageUtils;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.xml.stream.XMLStreamException;
 
 /**
  *
